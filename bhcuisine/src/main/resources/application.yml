@@ -1,21 +1,5 @@
 server:
   port: 8090
-#spring:
-#  datasource:
-#    type: com.alibaba.druid.pool.DruidDataSource
-#    druid:
-#      driver-class-name: com.mysql.cj.jdbc.Driver
-#      url: jdbc:mysql://47.97.155.171:3306/cuisine?useUnicode=true&characterEncoding=UTF-8
-#      username: bhcuisine
-#      password: Bhcuisine88872567.
-#      initial-size: 10
-#      max-active: 100
-#      min-idle: 10
-#      max-wait: 60000
-#      pool-prepared-statements: true
-#      max-pool-prepared-statement-per-connection-size: 20
-#      time-between-eviction-runs-millis: 60000
-#      min-evictable-idle-time-millis: 300000
 spring:
   datasource:
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
@@ -36,3 +20,4 @@ spring:
     url: jdbc:mysql://47.97.155.171:3306/cuisine?useUnicode=true&characterEncoding=UTF-8
     username: bhcuisine
     validationQuery: SELECT 1 FROM DUAL
+
