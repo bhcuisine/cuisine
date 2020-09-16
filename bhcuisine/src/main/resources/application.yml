@@ -1,8 +1,6 @@
 server:
   port: 8090
-<<<<<<< HEAD
 
-=======
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -19,8 +17,4 @@ spring:
       max-pool-prepared-statement-per-connection-size: 20
       time-between-eviction-runs-millis: 60000
       min-evictable-idle-time-millis: 300000
-# ���ӳ� druid
-# http://47.97.155.171:3306/cuisine
-# username: bhcuisine =======password: Bhcuisine88872567.
-#  lombock
->>>>>>> 783cc3d78f806d030df6f3336ae352078e6fc0d4
+
