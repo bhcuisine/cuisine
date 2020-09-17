@@ -51,10 +51,6 @@ public class User implements Serializable {
     @JsonProperty("branchLocation")
     private String branchLocation;
     /**
-     * 百分比
-     */
-    private Integer performance;
-    /**
      * 身份标识：1-BOSS;2-店主
      */
     private Integer status;
