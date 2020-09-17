@@ -25,4 +25,7 @@ public class CastService {
     public Page<Cast> findAllByRAndBranchNameAndRenTime(String rentTime, String branchName, String username, Pageable pageable){
         return castDao.findAllByRAndBranchNameAndRenTime(rentTime,branchName,username,pageable);
     }
+
+    public void updatePerformanceByBranchNameIn(Integer performance, String b, String time) {
+    }
 }

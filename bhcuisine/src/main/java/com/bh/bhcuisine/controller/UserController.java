@@ -93,10 +93,9 @@ public class UserController {
      */
     @ApiOperation(value = "批量保存绩效" ,  notes="批量保存绩效")
     @PostMapping("/api/savePerformance")
-    public Result savePerformance(@RequestParam Integer performance,@RequestParam List<Integer> ids){
-        for (Integer id:
-             ids) {
-            userService.updatePerformance(performance,id);
+    public Result savePerformance(@RequestParam Integer performance,@RequestParam List<String> branchName,@RequestParam String time){
+        for (String b: branchName) {
+                castService.updatePerformanceByBranchNameIn(performance,b,time);
         }
         System.out.println("保存成功");
         return ResultFactory.buildSuccessResult(performance);
@@ -110,7 +109,7 @@ public class UserController {
         //将利润转换为bigDecimal对象
         BigDecimal profit=new BigDecimal(profitTotal);
         //得到int型绩效率
-        int performance=userService.getPerformance(username);
+        int performance=3;
         try{
             //将绩效率转换为0.00后几位
             Double per = (Double) NumberFormat.getPercentInstance().parse(performance+"%");
