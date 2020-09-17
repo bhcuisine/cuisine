@@ -107,10 +107,10 @@ public class UserController {
                           @RequestParam Integer employeeTotal,
                           @RequestParam Integer rentTotal){
         String branchName=userService.getByUsername(username).getBranchName();
-        Integer performance=castService.findAllByBranchName(branchName).getPerformance();
+        //Integer performance=castService.findAllByBranchName(branchName).getPerformance();
         Cast cast=new Cast();
         cast.setBranchName(branchName);//店名
-        cast.setPerformance(performance);
+        cast.setPerformance(3);
         cast.setMonthTotal(monthTotal);//总金额
         cast.setRentTotal(rentTotal);
         cast.setEmployeeTotal(employeeTotal);//人工成本
@@ -126,7 +126,7 @@ public class UserController {
         //得到int型绩效率
         try{
             //将绩效率转换为0.00后几位
-            Double per = (Double) NumberFormat.getPercentInstance().parse(performance+"%");
+            Double per = (Double) NumberFormat.getPercentInstance().parse(cast.getPerformance()+"%");
             //将绩效率转换为bigDecimal
             BigDecimal newPer =new BigDecimal(per);
             //利润乘以绩效率
@@ -137,8 +137,7 @@ public class UserController {
             double performanceTotal=performance_total.doubleValue();
 //            System.out.println("最终绩效"+performanceTotal);
             cast.setPerformanceTotal(performanceTotal);
-
-//            castService.addCast(cast);
+            castService.addCast(cast);
             return ResultFactory.buildSuccessResult(performanceTotal);
         }catch (Exception e){
             e.printStackTrace();
