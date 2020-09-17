@@ -18,7 +18,7 @@ public interface CastDao extends JpaRepository<Cast,Integer>, JpaSpecificationEx
      * @param branchName
      * @return
      */
-    @Query(value = "SELECT u.id,c.id AS cid, c.employee_total,u.username,c.month_total,c.rent_time,c.rent_total," +
+    @Query(value = "SELECT u.id,c.id AS cid,c.cost_total,c.profit_total,c.performance_total,c.employee_total,u.username,c.month_total,c.rent_time,c.rent_total," +
             "u.performance,u.branch_name,u.branch_location " +
             "FROM tb_cast c LEFT JOIN tb_user u " +
             "ON c.branch_name=u.branch_name WHERE if(?1 !='',c.rent_time=?1,1=1) " +
