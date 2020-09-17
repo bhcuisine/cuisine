@@ -29,4 +29,21 @@ public interface UserDao extends JpaRepository<User,Integer>  , JpaSpecification
     @Query("update User u set u.password =?1 ")
     void updatePassWord(@Param(value = "password")String password);
 
+    /**
+     * 批量修改绩效
+     * @param performance 绩效
+     * @param id id
+     */
+    @Transactional
+    @Modifying
+    @Query("update User u set u.performance =:performance where u.id =:id")
+    void updatePerformanceByIdIn(@Param(value = "performance")Integer performance,@Param(value = "id")Integer id);
+
+    /**
+     * 获取绩效
+     * @param username
+     * @return
+     */
+    @Query(value = "SELECT u.performance,u.id,u.username,u.branch_name,u.branch_location FROM tb_user u WHERE u.username=:username",nativeQuery = true)
+    Integer getPerformance(@Param(value = "username")String username);
 }

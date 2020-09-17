@@ -24,13 +24,13 @@ public interface MaterialsDao extends JpaRepository<Materials,Integer>, JpaSpeci
      * @param pageable 分页
      * @return
      */
-    @Query(value = "select tb_user.id AS uid,tb_user.username," +
+    @Query(value = "select tb_user.id AS userid,tb_user.username," +
             "tb_user.password,tb_user.salt," +
             "tb_user.enabled,tb_user.branch_name,tb_user.branch_location,tb_user.performance," +
-            "tb_category_name.id AS cid,tb_user.status,tb_materials.category_id," +
-            "tb_materials.id,tb_materials.materials_name,tb_materials.price,tb_materials.quanty,tb_materials.update_time,tb_materials.add_time" +
-            " FROM tb_user LEFT JOIN tb_category_name " +
-            "ON tb_user.id=tb_category_name.id LEFT JOIN tb_materials " +
+            "tb_category_name.id AS categoryid,tb_user.status,tb_materials.category_id," +
+            "tb_materials.id,tb_materials.uid,tb_materials.materials_name,tb_materials.price,tb_materials.quanty,tb_materials.update_time,tb_materials.add_time" +
+            " FROM tb_materials LEFT JOIN tb_user " +
+            "ON tb_user.id=tb_materials.uid LEFT JOIN tb_category_name " +
             "ON tb_materials.category_id=tb_category_name.id WHERE " +
             "if(?1 !='',username=?1,1=1) AND if(?2 !='',tb_user.branch_name=?2,1=1) " +
             "AND if(?3 !='',tb_materials.add_time=?3,1=1) ",nativeQuery = true)

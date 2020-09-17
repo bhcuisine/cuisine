@@ -24,6 +24,10 @@ public class Materials implements Serializable {
     @Column(name="id")
     private Integer id;
     /**
+     * 用户门店id
+     */
+    private Integer uid;
+    /**
      * 材料名称
      */
     @Column(name = "materials_name")
@@ -39,7 +43,7 @@ public class Materials implements Serializable {
     /**
      * 价格
      */
-    private Integer price;
+    private Double price;
     /**
      * 数量
      */
