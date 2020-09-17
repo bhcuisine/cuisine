@@ -36,4 +36,30 @@ public class CastService {
     public void updatePerformanceByBranchNameIn(Integer performance,Integer id){
         castDao.updatePerformanceByBranchNameIn(performance,id);
     }
+
+    /**
+     * 添加数据
+     * @param cast 盈利实体类
+     */
+    public void addCast(Cast cast){
+        castDao.save(cast);
+    }
+
+    /**
+     * 根据店名找到盈利数据表
+     */
+    public Cast findAllByBranchName(String branchName){
+        return castDao.findAllByBranchName(branchName);
+    }
+
+
+    /**
+     * 根据id得到实体类所有
+     * @param id
+     * @return
+     */
+    public Cast findAllById(Integer id){
+        return castDao.findAllById(id);
+    }
+
 }

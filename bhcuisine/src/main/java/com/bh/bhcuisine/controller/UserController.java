@@ -2,6 +2,7 @@ package com.bh.bhcuisine.controller;
 
 import com.bh.bhcuisine.config.SaltUtil;
 import com.bh.bhcuisine.config.ShiroUtil;
+import com.bh.bhcuisine.dao.CastDao;
 import com.bh.bhcuisine.dao.MaterialsDao;
 import com.bh.bhcuisine.entity.Cast;
 import com.bh.bhcuisine.entity.Materials;
@@ -44,6 +45,9 @@ public class UserController {
     @Autowired
     private CastService castService;
 
+    @Autowired
+    private CastDao castDao;
+
     /**--注释掉username参数改用shiroSession获取用户名
      * 根据前端自主调整传入对象是requestBody还是requestParam
      *  按条件查询：时间、店名
@@ -65,6 +69,7 @@ public class UserController {
 //        String username=user.getUsername();
         PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
         Page<Cast> cast=castService.findAllByRAndBranchNameAndRenTime(addTime,branchName,username,pageRequest);
+        System.out.println(cast.getContent());
         return ResultFactory.buildSuccessResult(cast);
     }
 
@@ -85,15 +90,40 @@ public class UserController {
         return ResultFactory.buildSuccessResult(performance);
     }
 
-    @ApiOperation(value = "插入数据" ,  notes="插入数据")
+    /**
+     * 插入数据
+     * @param username 用户名
+     * @param monthTotal 总营业额
+     * @param rentTime 租的月份
+     * @param employeeTotal 人工成本
+     * @param rentTotal 房租
+     * @return
+     */
+    @ApiOperation(value = "不勾选具体月份插入数据" ,  notes="插入数据")
     @PostMapping("/api/addCast")
-    public Result addCast(@RequestParam String username){
-        //设置利润默认值
-        Double profitTotal=1257888.8999;
-        //将利润转换为bigDecimal对象
-        BigDecimal profit=new BigDecimal(profitTotal);
+    public Result addCast(@RequestParam String username,
+                          @RequestParam Integer monthTotal,
+                          @RequestParam String rentTime,
+                          @RequestParam Integer employeeTotal,
+                          @RequestParam Integer rentTotal){
+        String branchName=userService.getByUsername(username).getBranchName();
+        Integer performance=castService.findAllByBranchName(branchName).getPerformance();
+        Cast cast=new Cast();
+        cast.setBranchName(branchName);//店名
+        cast.setPerformance(performance);
+        cast.setMonthTotal(monthTotal);//总金额
+        cast.setRentTotal(rentTotal);
+        cast.setEmployeeTotal(employeeTotal);//人工成本
+        Double costTotal=2000.00;
+        cast.setCostTotal(costTotal);//成本
+        BigDecimal monthMoney=new BigDecimal(monthTotal);//总金额转为bigDecimal
+        BigDecimal costMoney=new BigDecimal(costTotal);//成本转为bigDecimal
+        BigDecimal rentMoney=new BigDecimal(rentTotal);//租金转为bigDecimal
+        BigDecimal profit=monthMoney.subtract(costMoney).subtract(rentMoney);
+        double pro=profit.doubleValue();
+        cast.setProfitTotal(pro);//利润
+        cast.setRent_time(rentTime);//当前月份
         //得到int型绩效率
-        int performance=3;
         try{
             //将绩效率转换为0.00后几位
             Double per = (Double) NumberFormat.getPercentInstance().parse(performance+"%");
@@ -105,8 +135,54 @@ public class UserController {
             BigDecimal performance_total = newProfit.setScale(2,BigDecimal.ROUND_HALF_DOWN);
             //将最终绩效转换为double保存数据库
             double performanceTotal=performance_total.doubleValue();
-            System.out.println("最终绩效"+performanceTotal);
+//            System.out.println("最终绩效"+performanceTotal);
+            cast.setPerformanceTotal(performanceTotal);
+
+//            castService.addCast(cast);
             return ResultFactory.buildSuccessResult(performanceTotal);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ResultFactory.buildFailResult("失败");
+    }
+
+    /**
+     * 插入数据
+     * @param username
+     * @param monthTotal
+     * @param employeeTotal
+     * @param rentTotal
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "勾选插入已存在月份数据" ,  notes="插入数据")
+    @PostMapping("/api/addCast2")
+    public Result addCast2(@RequestParam String username,
+                          @RequestParam Integer monthTotal,
+                          @RequestParam Integer employeeTotal,
+                          @RequestParam Integer rentTotal,
+                             @RequestParam Integer id){
+        Integer performance=castService.findAllById(id).getPerformance();
+        Double costTotal=2000.00;
+        BigDecimal monthMoney=new BigDecimal(monthTotal);//总金额转为bigDecimal
+        BigDecimal costMoney=new BigDecimal(costTotal);//成本转为bigDecimal
+        BigDecimal rentMoney=new BigDecimal(rentTotal);//租金转为bigDecimal
+        BigDecimal profit=monthMoney.subtract(costMoney).subtract(rentMoney);
+        double pro=profit.doubleValue();
+        System.out.println(pro);
+        try {
+            //将绩效率转换为0.00后几位
+            Double per = (Double) NumberFormat.getPercentInstance().parse(performance + "%");
+            //将绩效率转换为bigDecimal
+            BigDecimal newPer = new BigDecimal(per);
+            //利润乘以绩效率
+            BigDecimal newProfit = profit.multiply(newPer);
+            //设置保留小数点后2位
+            BigDecimal performance_total = newProfit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+            //将最终绩效转换为double保存数据库
+            double performanceTotal = performance_total.doubleValue();
+            castDao.updateCast(costTotal,employeeTotal,monthTotal,rentTotal,pro,performanceTotal,id);
+            return ResultFactory.buildSuccessResult("成功");
         }catch (Exception e){
             e.printStackTrace();
         }
