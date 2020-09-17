@@ -5,9 +5,11 @@ import com.bh.bhcuisine.entity.Cast;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
+/**
+ * 成本盈利服务层
+ */
 @Service
 public class CastService {
     /**
@@ -24,5 +26,14 @@ public class CastService {
      */
     public Page<Cast> findAllByRAndBranchNameAndRenTime(String rentTime, String branchName, String username, Pageable pageable){
         return castDao.findAllByRAndBranchNameAndRenTime(rentTime,branchName,username,pageable);
+    }
+
+    /**
+     * 批量保存绩效率
+     * @param performance 绩效率
+     * @param
+     */
+    public void updatePerformanceByBranchNameIn(Integer performance,Integer id){
+        castDao.updatePerformanceByBranchNameIn(performance,id);
     }
 }

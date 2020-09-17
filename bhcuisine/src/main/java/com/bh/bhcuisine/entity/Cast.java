@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * 成本表实体类
+ * 成本盈利表实体类
  */
 @Data
 @Entity
@@ -79,5 +79,14 @@ public class Cast implements Serializable {
     @Column(name = "performance_total")
     @JsonProperty("performanceTotal")
     private Double performanceTotal;
+
+    /**
+     * 绩效率
+     */
+    private Integer performance;
+    /**
+     * 当前月份
+     */
+    private String time;
 
 }

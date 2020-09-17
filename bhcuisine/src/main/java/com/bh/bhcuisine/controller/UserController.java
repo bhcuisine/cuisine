@@ -39,7 +39,7 @@ public class UserController {
     @Autowired
     private UserService userService;
     /**
-     * 注入成本服务service层
+     * 注入成本盈利服务service层
      */
     @Autowired
     private CastService castService;
@@ -64,23 +64,6 @@ public class UserController {
 //        User user=(User)SecurityUtils.getSubject().getSession().getAttribute("user");
 //        String username=user.getUsername();
         PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
-//        Page<Materials> list= materialsService.getAllByUserNameAndBranchNameAndAddTime(username,branchName,addTime,pageRequest);
-//        MaterialsDto materialsDto=new MaterialsDto();
-//        List<BigDecimal> newtotal=new ArrayList();
-//        System.out.println(list.getContent());
-//        for (Materials materials:list.getContent()) {
-//            BigDecimal usePrice =new BigDecimal(materials.getPrice());
-//            BigDecimal useQuanty =new BigDecimal(materials.getQuanty());
-//            BigDecimal allPrice=usePrice.multiply(useQuanty);
-//           newtotal.add(allPrice);
-//        }
-//        BigDecimal total=new BigDecimal(0);
-//        for (BigDecimal i:
-//             newtotal) {
-//            total=total.add(i);
-//        }
-//        保留小数点后2位
-//        BigDecimal setScale = total.setScale(2,BigDecimal.ROUND_HALF_DOWN);
         Page<Cast> cast=castService.findAllByRAndBranchNameAndRenTime(addTime,branchName,username,pageRequest);
         return ResultFactory.buildSuccessResult(cast);
     }
@@ -95,8 +78,8 @@ public class UserController {
     @PostMapping("/api/savePerformance")
     public Result savePerformance(@RequestParam Integer performance,@RequestParam List<Integer> ids){
         for (Integer id:
-             ids) {
-            userService.updatePerformance(performance,id);
+                ids) {
+                castService.updatePerformanceByBranchNameIn(performance,id);
         }
         System.out.println("保存成功");
         return ResultFactory.buildSuccessResult(performance);
@@ -110,7 +93,7 @@ public class UserController {
         //将利润转换为bigDecimal对象
         BigDecimal profit=new BigDecimal(profitTotal);
         //得到int型绩效率
-        int performance=userService.getPerformance(username);
+        int performance=3;
         try{
             //将绩效率转换为0.00后几位
             Double per = (Double) NumberFormat.getPercentInstance().parse(performance+"%");
@@ -145,8 +128,8 @@ public class UserController {
                           @RequestParam(required = false) String password,
                           @RequestParam(required = false,defaultValue = "1") Integer enabled,
                           @RequestParam String branchName,
-                          @RequestParam String branchLocation,
-                          @RequestParam(required = false,defaultValue = "0") Integer performance){
+                          @RequestParam String branchLocation
+                          ){
         User user =new User();
         user.setUsername(username);
         //保存密码
@@ -156,10 +139,9 @@ public class UserController {
         user.setBranchLocation(branchLocation);
         user.setBranchName(branchName);
         user.setEnabled(enabled);
-        user.setPerformance(performance);
         user.setStatus(2);
         userService.addUser(user);
-        System.out.println("保存成功"+user.toString());
+//        System.out.println("保存成功"+user.toString());
         return ResultFactory.buildSuccessResult("成功");
     }
 

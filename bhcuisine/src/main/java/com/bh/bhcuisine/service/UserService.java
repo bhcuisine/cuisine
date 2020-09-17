@@ -33,14 +33,7 @@ public class UserService {
         userDao.updatePassWord(password);
     }
 
-    /**
-     * 批量保存绩效
-     * @param performance
-     * @param ids
-     */
-    public void updatePerformance(Integer performance,Integer id){
-        userDao.updatePerformanceByIdIn(performance,id);
-    }
+
 
     /**
      * 实现添加新店
@@ -50,13 +43,6 @@ public class UserService {
         userDao.save(u);
     }
 
-    /**
-     * 得到绩效
-     * @param username
-     * @return
-     */
-    public Integer getPerformance(String username){
-        return userDao.getPerformance(username);
-    }
+
 
 }
