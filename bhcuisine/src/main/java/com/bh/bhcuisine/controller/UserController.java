@@ -84,7 +84,7 @@ public class UserController {
     public Result savePerformance(@RequestParam Integer performance,@RequestParam List<Integer> ids){
         for (Integer id:
                 ids) {
-                castService.updatePerformanceByBranchNameIn(performance,id);
+            castService.updatePerformanceByBranchNameIn(performance, id);
         }
         System.out.println("保存成功");
         return ResultFactory.buildSuccessResult(performance);

@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Time;
 import java.util.List;
@@ -23,10 +22,10 @@ public interface CastDao extends JpaRepository<Cast,Integer>, JpaSpecificationEx
      * @param branchName
      * @return
      */
-    @Query(value = "SELECT c.id,u.id AS userId,c.rent_time,c.cost_total,c.profit_total,c.performance_total,c.employee_total,u.username,c.month_total,c.rent_total," +
-            "            c.performance,u.branch_name,u.branch_location " +
-            "            FROM tb_cast c LEFT JOIN tb_user u " +
-            "            ON c.branch_name=u.branch_name  WHERE if(?1 !='',c.rent_time=?1,1=1) " +
+    @Query(value = "SELECT u.id,c.time,c.id AS cid,c.cost_total,c.profit_total,c.performance_total,c.employee_total,u.username,c.month_total,c.rent_time,c.rent_total," +
+            "c.performance,u.branch_name,u.branch_location " +
+            "FROM tb_cast c LEFT JOIN tb_user u " +
+            "ON c.branch_name=u.branch_name WHERE if(?1 !='',c.rent_time=?1,1=1) " +
             "AND if(?2 !='',c.branch_name=?2,1=1) AND if(?3 !='',u.username=?3,1=1) ",nativeQuery = true)
     Page<Cast> findAllByRAndBranchNameAndRenTime(@Param(value = "rentTime")String rentTime, @Param(value = "branchName")String branchName, @Param(value = "username")String username, Pageable pageable);
 
@@ -38,24 +37,7 @@ public interface CastDao extends JpaRepository<Cast,Integer>, JpaSpecificationEx
     @Transactional
     @Modifying
     @Query("update Cast c set c.performance =:performance where c.id=:id")
-    void updatePerformanceByBranchNameIn(@Param(value = "performance")Integer performance,@Param(value = "id")Integer id);
+    void updatePerformanceByBranchNameIn(@Param(value = "performance")Integer performance,Integer id);
 
-
-    Cast findAllByBranchName(String branchName);
-
-
-    Cast findAllById(Integer id);
-
-
-    @Transactional
-    @Modifying
-    @Query("update Cast c set c.costTotal =:costTotal,c.monthTotal=:monthTotal,c.employeeTotal=:employeeTotal,c.rentTotal=:rentTotal,c.profitTotal=:profitTotal,c.performanceTotal=:performanceTotal where c.id=:id")
-    void updateCast(@Param(value = "costTotal")Double costTotal,
-                    @Param(value = "employeeTotal")Integer employeeTotal,
-                    @Param(value = "monthTotal")Integer monthTotal,
-                    @Param(value = "rentTotal")Integer rentTotal,
-                    @Param(value = "profitTotal")Double profitTotal,
-                    @Param(value = "performanceTotal")Double performanceTotal,
-                    @Param(value = "id")Integer id);
 
 }
