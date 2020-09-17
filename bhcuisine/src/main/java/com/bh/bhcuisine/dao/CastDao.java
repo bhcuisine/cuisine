@@ -22,7 +22,7 @@ public interface CastDao extends JpaRepository<Cast,Integer>, JpaSpecificationEx
      * @param branchName
      * @return
      */
-    @Query(value = "SELECT u.id,c.time,c.id AS cid,c.cost_total,c.profit_total,c.performance_total,c.employee_total,u.username,c.month_total,c.rent_time,c.rent_total," +
+    @Query(value = "SELECT u.id,c.id AS cid,c.cost_total,c.profit_total,c.performance_total,c.employee_total,u.username,c.month_total,c.rent_time,c.rent_total," +
             "c.performance,u.branch_name,u.branch_location " +
             "FROM tb_cast c LEFT JOIN tb_user u " +
             "ON c.branch_name=u.branch_name WHERE if(?1 !='',c.rent_time=?1,1=1) " +
@@ -37,7 +37,7 @@ public interface CastDao extends JpaRepository<Cast,Integer>, JpaSpecificationEx
     @Transactional
     @Modifying
     @Query("update Cast c set c.performance =:performance where c.id=:id")
-    void updatePerformanceByBranchNameIn(@Param(value = "performance")Integer performance,Integer id);
+    void updatePerformanceByBranchNameIn(@Param(value = "performance")Integer performance,@Param(value = "id") Integer id);
 
 
 }

@@ -84,9 +84,5 @@ public class Cast implements Serializable {
      * 绩效率
      */
     private Integer performance;
-    /**
-     * 当前月份
-     */
-    private String time;
 
 }
