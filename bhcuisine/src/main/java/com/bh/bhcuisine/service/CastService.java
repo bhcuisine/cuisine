@@ -65,6 +65,13 @@ public class CastService {
         return castDao.findAllById(id);
     }
 
-
+    /**
+     * 根据时间查找盈利实体
+     * @param rentTime
+     * @return
+     */
+    public Cast findAllByRentTime(String rentTime){
+        return castDao.findAllByRentTime(rentTime);
+    }
 
 }

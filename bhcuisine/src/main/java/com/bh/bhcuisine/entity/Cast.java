@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "tb_cast")
 @JsonIgnoreProperties({"handler","hibernateLazyInitializer"})
-public class Cast implements Serializable {
+public class Cast  {
 
     /**
      * 成本表主键id
@@ -53,12 +53,6 @@ public class Cast implements Serializable {
     private Integer rentTotal;
 
     /**
-     * 费用时间
-     */
-    @Column(name = "rent_time")
-    @JsonProperty("rentTime")
-    private String rent_time;
-    /**
      * 材料成本
      */
     @Column(name = "cost_total")
@@ -84,5 +78,12 @@ public class Cast implements Serializable {
      * 绩效率
      */
     private Integer performance;
+
+    /**
+     * 费用时间
+     */
+    @Column(name = "rent_time")
+    @JsonProperty("rentTime")
+    private String rentTime;
 
 }

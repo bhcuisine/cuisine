@@ -24,13 +24,22 @@ public interface CastDao extends JpaRepository<Cast,Integer>, JpaSpecificationEx
      * 按月份查询营业额，人工，房租
      * @param rentTime
      * @param branchName
+     * if(?1 !='',tb_cast.rent_time=?1,1=1) " +
+     *             "AND if(?2 !='',tb_cast.branch_name=?2,1=1) AND if(?3 !='',tb_user.username=?3,1=1)
+     *
+     *
+     *             tb_cast.id,tb_user.id AS userId,tb_user.username,tb_user.password," +
+     *             "            tb_user.salt,tb_user.enabled,tb_user.branch_name AS b,tb_user.status,tb_user.branch_location,tb_cast.branch_name,tb_cast.month_total," +
+     *             "            tb_cast.employee_total,tb_cast.rent_total," +
+     *             "            tb_cast.profit_total,tb_cast.performance_total," +
+     *             "            tb_cast.performance,tb_cast.rent_time,tb_cast.cost_total
      * @return
      */
-    @Query(value = "SELECT u.id AS userId,c.id ,c.cost_total,c.profit_total,c.performance_total,c.employee_total,u.username,c.month_total,c.rent_time,c.rent_total," +
-            "c.performance,u.branch_name,u.branch_location " +
-            "FROM tb_cast c LEFT JOIN tb_user u " +
-            "ON c.branch_name=u.branch_name WHERE if(?1 !='',c.rent_time=?1,1=1) " +
-            "AND if(?2 !='',c.branch_name=?2,1=1) AND if(?3 !='',u.username=?3,1=1) ",nativeQuery = true)
+    @Query(value = "SELECT *" +
+            "            FROM tb_cast LEFT JOIN tb_user" +
+            "                  ON tb_cast.branch_name=tb_user.branch_name "+
+            "where if(?1 !='',tb_cast.rent_time=?1,1=1) " +
+                       "AND if(?2 !='',tb_cast.branch_name=?2,1=1) AND if(?3 !='',tb_user.username=?3,1=1)",nativeQuery = true)
     Page<Cast> findAllByRAndBranchNameAndRenTime(@Param(value = "rentTime")String rentTime, @Param(value = "branchName")String branchName, @Param(value = "username")String username, Pageable pageable);
 
     /**
@@ -43,10 +52,29 @@ public interface CastDao extends JpaRepository<Cast,Integer>, JpaSpecificationEx
     @Query("update Cast c set c.performance =:performance where c.id=:id")
     void updatePerformanceByBranchNameIn(@Param(value = "performance")Integer performance,Integer id);
 
-
-     Cast findAllById(Integer id);
+    /**
+     * 根据id获取盈利实体
+     * @param id
+     * @return
+     */
+    Cast findAllById(Integer id);
 
     Cast findAllByBranchName(String branchName);
+
+
+    /**
+     * 批量查找绩效率
+     * @param id
+     * @return
+     */
+    List<Cast> findAllByIdIn(List<Integer> id);
+
+    /**
+     * 根据时间找盈利实体
+     * @param rentTime
+     * @return
+     */
+    Cast findAllByRentTime(String rentTime);
 
     /**
      * 插入已存在数据

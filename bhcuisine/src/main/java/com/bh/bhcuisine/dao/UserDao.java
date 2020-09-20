@@ -26,8 +26,8 @@ public interface UserDao extends JpaRepository<User,Integer>  , JpaSpecification
      */
     @Transactional
     @Modifying
-    @Query("update User u set u.password =?1 ")
-    void updatePassWord(@Param(value = "password")String password);
+    @Query("update User u set u.password =?1 where u.id=?2")
+    void updatePassWord(@Param(value = "password")String password,@Param(value = "id")Integer id);
 
 
 

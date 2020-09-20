@@ -29,22 +29,28 @@ public class LoginController {
      * 用户登录
      * @param username 用户名
      * @param password 密码
+     *                 @RequestParam String username,@RequestParam String password
      * @return
      */
     @ApiOperation(value = "用户登录" ,  notes="用户登录")
     @PostMapping(value = "/api/login")
-    public Result login(@RequestParam String username,@RequestParam String password) {
-        User user = userService.getByUsername(username);
-        //提交登录
-        Subject subject = SecurityUtils.getSubject();
-        if (!subject.isAuthenticated()) {
-            UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-            token.setRememberMe(true);
-            subject.login(token);
-            return ResultFactory.buildSuccessResult(user);
-        }
-        else {
-            return ResultFactory.buildFailResult("失败");
+    public Result login(@RequestBody User reuser
+            ) {
+        User user = userService.getByUsername(reuser.getUsername());
+        if(user!=null){
+            return ResultFactory.buildFailResult("用户名已经注册");
+        }else{
+            //提交登录
+            Subject subject = SecurityUtils.getSubject();
+            if (!subject.isAuthenticated()) {
+                UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), reuser.getPassword());
+                token.setRememberMe(true);
+                subject.login(token);
+                return ResultFactory.buildSuccessResult(user);
+            }
+            else {
+                return ResultFactory.buildFailResult("失败");
+            }
         }
     }
 
@@ -55,11 +61,26 @@ public class LoginController {
      */
     @ApiOperation(value = "用户修改密码" ,  notes="用户修改密码")
     @PostMapping(value = "/api/resetPassword")
-    public Result resetPassword(@RequestParam String newPassword){
+    public Result resetPassword(
+            @RequestBody User reuser
+//            @RequestParam String newPassword
+        ){
+//        System.out.println(reuser.getPassword());
         User user=(User)SecurityUtils.getSubject().getSession().getAttribute("user");
-        String password= ShiroUtil.sha256(newPassword,user.getSalt());
-        userService.updatePassWord(password);
+        Integer id=user.getId();
+        System.out.println("当前用户"+user);
+        String password= ShiroUtil.sha256(reuser.getPassword(),user.getSalt());
+        userService.updatePassWord(password,id);
         return ResultFactory.buildSuccessResult(user);
+    }
+
+    @ApiOperation(value = "用户退出登录", notes = "用户退出登录")
+    @PostMapping("/api/loginout")
+    @ResponseBody
+    public Result logout() {
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        return ResultFactory.buildSuccessResult("退出成功");
     }
 
 }

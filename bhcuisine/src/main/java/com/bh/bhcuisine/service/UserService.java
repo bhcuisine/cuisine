@@ -4,6 +4,7 @@ import com.bh.bhcuisine.dao.UserDao;
 import com.bh.bhcuisine.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 /**
  * 用户服务层
  */
@@ -29,8 +30,8 @@ public class UserService {
      * 修改用户密码
      * @param password
      */
-    public void updatePassWord(String password){
-        userDao.updatePassWord(password);
+    public void updatePassWord(String password,Integer id){
+        userDao.updatePassWord(password,id);
     }
 
 
@@ -43,6 +44,12 @@ public class UserService {
         userDao.save(u);
     }
 
+    /**
+     * 得到所有店名
+     */
+    public List<User> getAllBranchName(){
+        return userDao.findAll();
+    }
 
 
 }
