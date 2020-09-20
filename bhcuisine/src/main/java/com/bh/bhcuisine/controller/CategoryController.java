@@ -6,6 +6,7 @@ import com.bh.bhcuisine.result.ResultFactory;
 import com.bh.bhcuisine.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,5 +25,15 @@ public class CategoryController {
         }catch (Exception e){
             return ResultFactory.buildFailResult("失败");
         }
+    }
+
+    /**
+     * 查询所有分类
+     * @return
+     */
+    @ApiOperation(value = "查询所有分类" ,  notes="查询所有分类")
+    @GetMapping("/api/category")
+    public Result fallAll(){
+        return ResultFactory.buildSuccessResult(categoryService.fallAll());
     }
 }

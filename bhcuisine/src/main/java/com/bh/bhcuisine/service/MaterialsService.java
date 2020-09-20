@@ -31,4 +31,12 @@ public class MaterialsService {
 //        return materialsDao.getAllByUserNameAndBranchNameAndAddTime(username,branchName,addTime,pageable);
 //    }
 
+    /**
+     * 材料
+     * @param materials
+     */
+    public void addMaterials(Materials materials){
+        materialsDao.save(materials);
+    }
+
 }
