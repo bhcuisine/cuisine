@@ -62,27 +62,38 @@ public class UserController {
      * @return
      */
     @ApiOperation(value = "用户查询" ,  notes="用户查询")
-    @GetMapping(value = "/api/serach")
+    @GetMapping(value = "/api/search")
     public Result getSearchData(@RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-                                @RequestParam(value = "pagesize", required = false, defaultValue = "8") Integer pagesize,
-//                                @RequestParam(required = false) String username,
+                                @RequestParam(value = "pagesize", required = false, defaultValue = "10") Integer pagesize,
+                                @RequestParam(required = false) String username,
 //                                @RequestBody User user,
                                 @RequestParam(required = false) String branchName,
                                 @RequestParam(required = false) String addTime) {
-        User user=(User) SecurityUtils.getSubject().getSession().getAttribute("user");
-        String username=user.getUsername();
-        if(username.equals("BOSS")){
-            username=null;
-        }
-        if(branchName.equals("BOSS")){
-            branchName=null;
-        }
+//        User user=(User) SecurityUtils.getSubject().getSession().getAttribute("user");
+//        String username=user.getUsername();
+        System.out.println(username);
         PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
         Page<Cast> cast=castService.findAllByRAndBranchNameAndRenTime(addTime,branchName,username,pageRequest);
-        System.out.println(cast.getContent());
+//        System.out.println(cast.getContent());
+        System.out.println(cast.getTotalElements());
         return ResultFactory.buildSuccessResult(cast);
     }
 
+
+    @ApiOperation(value = "管理员查询" ,  notes="管理员查询")
+    @GetMapping(value = "/api/adminSearch")
+    public Result getSearchData(@RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                @RequestParam(value = "pagesize", required = false, defaultValue = "10") Integer pagesize,
+                                @RequestParam(required = false) String branchName,
+                                @RequestParam(required = false) String addTime) {
+//        User user=(User) SecurityUtils.getSubject().getSession().getAttribute("user");
+//        String username=user.getUsername();
+        System.out.println(pagesize);
+        PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
+        Page<Cast> cast=castService.findAllByRAndBranchNameAndRenTime2(addTime,branchName,pageRequest);
+//        System.out.println(cast.getContent());
+        return ResultFactory.buildSuccessResult(cast);
+    }
     /**
      * 批量获取绩效率
      * @param ids
@@ -107,7 +118,7 @@ public class UserController {
     @ApiOperation(value = "批量保存绩效率" ,  notes="批量保存绩效率")
     @PostMapping("/api/savePerformance")
     public Result savePerformance(@RequestParam Integer performance,@RequestParam List<Integer> ids){
-        System.out.println(ids);
+//        System.out.println(ids);
         for (Integer id:
                 ids) {
             Cast cast=castService.findAllById(id);
@@ -183,7 +194,7 @@ public class UserController {
     }
 
     /**
-     * 得到所有店名
+     * 得到所有店名--去除boss店
      * @return
      */
     @ApiOperation(value = "得到所有店" ,  notes="得到所有店名")
@@ -193,7 +204,11 @@ public class UserController {
         List<String> branchName=new ArrayList();
         for (User u:
              users) {
-            branchName.add(u.getBranchName());
+            if(u.getBranchName().equals("BOSS")){
+                users.remove(u.getBranchName());
+            }else{
+                branchName.add(u.getBranchName());
+            }
         }
         return ResultFactory.buildSuccessResult(branchName);
     }
@@ -220,13 +235,13 @@ public class UserController {
     @ApiOperation(value = "勾选插入已存在月份数据也就是修改数据" ,  notes="插入数据也就是修改数据")
     @PostMapping("/api/addCast2")
     public Result addCast2(
-//            @RequestParam String username,
+            @RequestParam String username,
                           @RequestParam Integer monthTotal,
                           @RequestParam Integer employeeTotal,
                           @RequestParam Integer rentTotal,
                              @RequestParam Integer id){
-        User user=(User)SecurityUtils.getSubject().getSession().getAttribute("user");
-        String username=user.getUsername();
+//        User user=(User)SecurityUtils.getSubject().getSession().getAttribute("user");
+//        String username=user.getUsername();
         Integer performance=castService.findAllById(id).getPerformance();
         Double costTotal=castService.findAllById(id).getCostTotal();
         BigDecimal monthMoney=new BigDecimal(monthTotal);//总金额转为bigDecimal
@@ -272,18 +287,25 @@ public class UserController {
                           @RequestParam String branchName,
                           @RequestParam String branchLocation
                           ){
-        User user =new User();
-        user.setUsername(username);
-        //保存密码
-        String salt= SaltUtil.getSalt();
-        user.setPassword(ShiroUtil.sha256(password, salt));
-        user.setSalt(salt);
-        user.setBranchLocation(branchLocation);
-        user.setBranchName(branchName);
-        user.setEnabled(enabled);
-        user.setStatus(2);
-        userService.addUser(user);
-        return ResultFactory.buildSuccessResult("成功");
+        User u=userService.getByUsername(username);
+        if(u!=null){
+            return ResultFactory.buildFailResult("已存在");
+        }
+        else{
+            User user =new User();
+            user.setUsername(username);
+            //保存密码
+            String salt= SaltUtil.getSalt();
+            password="123";
+            user.setPassword(ShiroUtil.sha256(password, salt));
+            user.setSalt(salt);
+            user.setBranchLocation(branchLocation);
+            user.setBranchName(branchName);
+            user.setEnabled(enabled);
+            user.setStatus(2);
+            userService.addUser(user);
+            return ResultFactory.buildSuccessResult("成功");
+        }
     }
 
 

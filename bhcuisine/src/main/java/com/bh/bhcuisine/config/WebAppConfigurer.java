@@ -14,7 +14,7 @@ public class WebAppConfigurer implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
 //                .allowedOrigins("*")
-                .allowedOrigins("http://192.168.1.110:8080")
+                .allowedOrigins("http://192.168.1.118:8080")
                 .allowCredentials(true)
                 .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE","OPTIONS")
                 .maxAge(3600);

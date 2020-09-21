@@ -25,6 +25,8 @@ public class LoginController {
     private UserService userService;
 
 
+
+
     /**
      * 用户登录
      * @param username 用户名
@@ -37,9 +39,6 @@ public class LoginController {
     public Result login(@RequestBody User reuser
             ) {
         User user = userService.getByUsername(reuser.getUsername());
-        if(user!=null){
-            return ResultFactory.buildFailResult("用户名已经注册");
-        }else{
             //提交登录
             Subject subject = SecurityUtils.getSubject();
             if (!subject.isAuthenticated()) {
@@ -51,7 +50,6 @@ public class LoginController {
             else {
                 return ResultFactory.buildFailResult("失败");
             }
-        }
     }
 
     /**
@@ -66,9 +64,12 @@ public class LoginController {
 //            @RequestParam String newPassword
         ){
 //        System.out.println(reuser.getPassword());
-        User user=(User)SecurityUtils.getSubject().getSession().getAttribute("user");
+//        User user=(User)SecurityUtils.getSubject().getSession().getAttribute("user");
+//        Integer id=user.getId();
+//        System.out.println("当前用户"+user);
+        String username=reuser.getUsername();
+        User user=userService.getByUsername(username);
         Integer id=user.getId();
-        System.out.println("当前用户"+user);
         String password= ShiroUtil.sha256(reuser.getPassword(),user.getSalt());
         userService.updatePassWord(password,id);
         return ResultFactory.buildSuccessResult(user);
@@ -76,8 +77,8 @@ public class LoginController {
 
     @ApiOperation(value = "用户退出登录", notes = "用户退出登录")
     @PostMapping("/api/loginout")
-    @ResponseBody
     public Result logout() {
+//        ShiroUtil.logout();
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
         return ResultFactory.buildSuccessResult("退出成功");

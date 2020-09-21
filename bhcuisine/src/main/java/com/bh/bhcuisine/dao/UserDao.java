@@ -30,5 +30,4 @@ public interface UserDao extends JpaRepository<User,Integer>  , JpaSpecification
     void updatePassWord(@Param(value = "password")String password,@Param(value = "id")Integer id);
 
 
-
 }

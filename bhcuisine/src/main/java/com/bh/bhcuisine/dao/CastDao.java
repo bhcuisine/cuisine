@@ -38,10 +38,16 @@ public interface CastDao extends JpaRepository<Cast,Integer>, JpaSpecificationEx
     @Query(value = "SELECT *" +
             "            FROM tb_cast LEFT JOIN tb_user" +
             "                  ON tb_cast.branch_name=tb_user.branch_name "+
-            "where if(?1 !='',tb_cast.rent_time=?1,1=1) " +
-                       "AND if(?2 !='',tb_cast.branch_name=?2,1=1) AND if(?3 !='',tb_user.username=?3,1=1)",nativeQuery = true)
+            "where if(?1 is not null,tb_cast.rent_time=?1,1=1) " +
+                       "AND if(?2 is not null,tb_cast.branch_name=?2,1=1) AND if(?3 is not null,tb_user.username=?3,1=1)",nativeQuery = true)
     Page<Cast> findAllByRAndBranchNameAndRenTime(@Param(value = "rentTime")String rentTime, @Param(value = "branchName")String branchName, @Param(value = "username")String username, Pageable pageable);
 
+    @Query(value = "SELECT *" +
+            "            FROM tb_cast LEFT JOIN tb_user" +
+            "                  ON tb_cast.branch_name=tb_user.branch_name "+
+            "where if(?1 is not null,tb_cast.rent_time=?1,1=1) " +
+            "AND if(?2 is not null,tb_cast.branch_name=?2,1=1) ",nativeQuery = true)
+    Page<Cast> findAllByRAndBranchNameAndRenTime2(@Param(value = "rentTime")String rentTime, @Param(value = "branchName")String branchName,Pageable pageable);
     /**
      * 批量修改绩效率
      * @param performance 绩效率
@@ -60,6 +66,7 @@ public interface CastDao extends JpaRepository<Cast,Integer>, JpaSpecificationEx
     Cast findAllById(Integer id);
 
     Cast findAllByBranchName(String branchName);
+
 
 
     /**

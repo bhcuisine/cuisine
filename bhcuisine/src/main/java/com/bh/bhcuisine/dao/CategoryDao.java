@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CategoryDao extends JpaRepository<Category,Integer>, JpaSpecificationExecutor<Category> {
+
+    Category findAllByCategoryName(String StringName);
 }

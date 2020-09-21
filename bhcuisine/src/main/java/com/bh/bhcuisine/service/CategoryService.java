@@ -2,6 +2,7 @@ package com.bh.bhcuisine.service;
 
 import com.bh.bhcuisine.dao.CategoryDao;
 import com.bh.bhcuisine.entity.Category;
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +24,10 @@ public class CategoryService {
     public List<Category> fallAll(){
         return categoryDao.findAll();
     }
+
+    public Category findAllByCategoryName(String categoryName){
+        return categoryDao.findAllByCategoryName(categoryName);
+    }
+
 
 }

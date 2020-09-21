@@ -6,10 +6,7 @@ import com.bh.bhcuisine.result.ResultFactory;
 import com.bh.bhcuisine.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CategoryController {
@@ -17,14 +14,21 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @ApiOperation(value = "分类" ,  notes="分类")
-    @PostMapping("/api/category")
-    public Result addCategory(@RequestBody Category category){
-        try {
+    @PostMapping("/api/addcategory")
+    public Result addCategory(@RequestBody Category c){
+        System.out.println(c.getCategoryName());
+        Category seachC=categoryService.findAllByCategoryName(c.getCategoryName());
+        if(seachC==null){
+            Category category=new Category();
+            category.setCategoryName(c.getCategoryName());
             categoryService.addCategory(category);
             return ResultFactory.buildSuccessResult("成功");
-        }catch (Exception e){
-            return ResultFactory.buildFailResult("失败");
         }
+        else{
+            return ResultFactory.buildFailResult("已经存在");
+        }
+
+
     }
 
     /**

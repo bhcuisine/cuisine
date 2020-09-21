@@ -32,6 +32,15 @@ public class CastService {
     }
 
     /**
+     * 返回分页list
+     * @param rentTime
+     * @param branchName
+     * @return
+     */
+    public Page<Cast> findAllByRAndBranchNameAndRenTime2(String rentTime, String branchName, Pageable pageable){
+        return castDao.findAllByRAndBranchNameAndRenTime2(rentTime,branchName,pageable);
+    }
+    /**
      * 批量保存绩效率
      * @param performance 绩效率
      * @param
