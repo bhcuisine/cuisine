@@ -100,8 +100,8 @@ public class UserController {
      * @return
      */
     @ApiOperation(value = "批量获取绩效率" ,  notes="批量获取绩效率")
-    @GetMapping("/api/getPerformance")
-    public Result getPerformance(@RequestParam List<Integer> ids){
+    @GetMapping("/api/getListPerformance")
+    public Result getListPerformance(@RequestParam List<Integer> ids){
         List<Cast> casts=castDao.findAllByIdIn(ids);
         Integer performance=casts.get(0).getPerformance();
         Map<String,Object> map=new HashMap();
@@ -110,7 +110,17 @@ public class UserController {
         return ResultFactory.buildSuccessResult(map);
     }
     /**
-     * 添加绩效率
+     * 获取绩效率
+     */
+    @ApiOperation(value = "获取绩效率" ,  notes="获取绩效率")
+    @GetMapping("/api/getPerformance")
+    public Result getListPerformance(@RequestParam Integer id){
+        Cast cast=castDao.findAllById(id);
+        Integer performance=cast.getPerformance();
+        return ResultFactory.buildSuccessResult(performance);
+    }
+    /**
+     * 批量添加绩效率
      * @param performance
      * @param ids
      * @return
