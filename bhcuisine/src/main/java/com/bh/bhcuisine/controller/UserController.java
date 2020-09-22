@@ -57,31 +57,7 @@ public class UserController {
     @Autowired
     private CastDao castDao;
 
-    /**
-     * --注释掉username参数改用shiroSession获取用户名
-     * 根据前端自主调整传入对象是requestBody还是requestParam
-     * 按条件查询：时间、店名
-     *
-     * @param currentPage 当前页
-     * @param pagesize    每页数量
-     * @param branchName  店名
-     * @param addTime     添加时间
-     * @return
-     */
-    @ApiOperation(value = "用户查询", notes = "用户查询")
-    @GetMapping(value = "/api/search")
-    public Result getSearchData(@RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
-                                @RequestParam(value = "pagesize", required = false, defaultValue = "10") Integer pagesize,
-                                @RequestParam(required = false) String username,
-//                                @RequestBody User user,
-                                @RequestParam(required = false) String branchName,
-                                @RequestParam(required = false) String addTime) {
-        System.out.println(username);
-        PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
-        Page<Cast> cast = castService.findAllByRAndBranchNameAndRenTime(addTime, branchName, username, pageRequest);
-        System.out.println(cast.getTotalElements());
-        return ResultFactory.buildSuccessResult(cast);
-    }
+
 
 
     @ApiOperation(value = "管理员查询", notes = "管理员查询")
