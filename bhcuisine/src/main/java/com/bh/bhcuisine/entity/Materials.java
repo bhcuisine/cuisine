@@ -50,6 +50,12 @@ public class Materials implements Serializable {
      */
     private Integer quanty;
     /**
+     * 每个材料成本materials_total
+     */
+    @Column(name = "materials_total")
+    @JsonProperty("materialsTotal")
+    private Double materialsTotal;
+    /**
      * 更新时间
      */
     @Column(name = "update_time")

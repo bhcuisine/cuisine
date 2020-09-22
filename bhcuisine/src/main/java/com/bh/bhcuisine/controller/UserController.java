@@ -256,53 +256,6 @@ public class UserController {
         return ResultFactory.buildSuccessResult(cast);
     }
 
-    /**
-     * 插入数据
-     *
-     * @param username
-     * @param monthTotal
-     * @param employeeTotal
-     * @param rentTotal
-     * @param id
-     * @return
-     */
-    @ApiOperation(value = "勾选插入已存在月份数据也就是修改数据", notes = "插入数据也就是修改数据")
-    @PostMapping("/api/addCast2")
-    public Result addCast2(@RequestBody Cast c
-//            @RequestParam String username,
-//                          @RequestParam Integer monthTotal,
-//                          @RequestParam Integer employeeTotal,
-//                          @RequestParam Integer rentTotal,
-//                             @RequestParam Integer id
-    ) {
-        System.out.println("获取的id是" + c.getId());
-        Integer performance = castService.findAllById(c.getId()).getPerformance();
-        Double costTotal = castService.findAllById(c.getId()).getCostTotal();
-        BigDecimal monthMoney = new BigDecimal(c.getMonthTotal());//总金额转为bigDecimal
-        BigDecimal costMoney = new BigDecimal(costTotal);//成本转为bigDecimal
-        BigDecimal rentMoney = new BigDecimal(c.getRentTotal());//租金转为bigDecimal
-        BigDecimal employMoney = new BigDecimal(c.getEmployeeTotal());//获取人工成本
-        BigDecimal profit = monthMoney.subtract(costMoney).subtract(rentMoney).subtract(employMoney);
-        double pro = profit.doubleValue();
-        System.out.println(pro);
-        try {
-            //将绩效率转换为0.00后几位
-            Double per = (Double) NumberFormat.getPercentInstance().parse(performance + "%");
-            //将绩效率转换为bigDecimal
-            BigDecimal newPer = new BigDecimal(per);
-            //利润乘以绩效率
-            BigDecimal newProfit = profit.multiply(newPer);
-            //设置保留小数点后2位
-            BigDecimal performance_total = newProfit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
-            //将最终绩效转换为double保存数据库
-            double performanceTotal = performance_total.doubleValue();
-            castDao.updateCast(costTotal, c.getEmployeeTotal(), c.getMonthTotal(), c.getRentTotal(), pro, performanceTotal, c.getId());
-            return ResultFactory.buildSuccessResult("成功");
-        } catch (RuntimeException | ParseException e) {
-            e.printStackTrace();
-        }
-        return ResultFactory.buildFailResult("失败");
-    }
 
     /**
      * 添加新店

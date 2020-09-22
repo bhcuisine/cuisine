@@ -4,13 +4,16 @@ package com.bh.bhcuisine.dao;
 import com.bh.bhcuisine.entity.Materials;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+import java.util.Date;
 /**
  * 数据dao层
  */
@@ -37,4 +40,35 @@ public interface MaterialsDao extends JpaRepository<Materials, Integer>, JpaSpec
             "if(?1 !='',username=?1,1=1) AND if(?2 !='',tb_user.branch_name=?2,1=1) " +
             "AND if(?3 !='',tb_materials.add_time=?3,1=1) ", nativeQuery = true)
     Page<Materials> getAllByUserNameAndBranchNameAndAddTime(String username, String branchName, String addTime, Pageable pageable);
+
+
+    List<Materials> findAllByUidAndAddTime(@Param(value = "uid") Integer uid,@Param(value = "addTime")String addTime);
+
+    List<Materials> findAllByUidIn(@Param(value = "uid") Integer uid);
+
+
+    @Query(value = "select * from tb_materials where if(?1 !='',tb_materials.id=?1,1=1)",nativeQuery = true)
+    Page<Materials> getAll(@Param(value = "id") Integer id,Pageable pageable);
+    /**
+     * 插入已存在数据
+     *
+     * @param branchName
+     * @return
+     */
+    @Transactional
+    @Modifying
+    @Query("update Materials m set m.materialsName=:materialsName,m.updateTime=:updateTime,m.materialsTotal=:materialsTotal,m.price=:price,m.quanty=:quanty where m.id=:id")
+    void updateMaterials(@Param(value = "materialsName") String materialsName,
+                         @Param(value = "updateTime") Date updateTime,
+                         @Param(value = "materialsTotal") Double materialsTotal,
+                         @Param(value = "price") Double price,
+                         @Param(value = "quanty") Integer quanty,
+                         @Param(value = "id") Integer id);
+
+
+    /**
+     * 根据id删除材料
+     * @param id
+     */
+    void deleteById(@Param(value = "id") Integer id);
 }
