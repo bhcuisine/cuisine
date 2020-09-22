@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- 解决跨域问题 配置类
+ * 解决跨域问题 配置类
  */
 @Configuration
 public class WebAppConfigurer implements WebMvcConfigurer {
@@ -16,7 +16,7 @@ public class WebAppConfigurer implements WebMvcConfigurer {
 //                .allowedOrigins("*")
                 .allowedOrigins("http://192.168.1.118:8080")
                 .allowCredentials(true)
-                .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE","OPTIONS")
+                .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
                 .maxAge(3600);
     }
 }

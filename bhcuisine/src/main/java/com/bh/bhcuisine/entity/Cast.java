@@ -13,15 +13,15 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "tb_cast")
-@JsonIgnoreProperties({"handler","hibernateLazyInitializer"})
-public class Cast  {
+@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
+public class Cast {
 
     /**
      * 成本表主键id
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Integer id;
     /**
      * 店名

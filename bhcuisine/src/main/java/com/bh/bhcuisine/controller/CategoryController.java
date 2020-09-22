@@ -13,18 +13,17 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @ApiOperation(value = "分类" ,  notes="分类")
+    @ApiOperation(value = "分类", notes = "分类")
     @PostMapping("/api/addcategory")
-    public Result addCategory(@RequestBody Category c){
+    public Result addCategory(@RequestBody Category c) {
         System.out.println(c.getCategoryName());
-        Category seachC=categoryService.findAllByCategoryName(c.getCategoryName());
-        if(seachC==null){
-            Category category=new Category();
+        Category seachC = categoryService.findAllByCategoryName(c.getCategoryName());
+        if (seachC == null) {
+            Category category = new Category();
             category.setCategoryName(c.getCategoryName());
             categoryService.addCategory(category);
             return ResultFactory.buildSuccessResult("成功");
-        }
-        else{
+        } else {
             return ResultFactory.buildFailResult("已经存在");
         }
 
@@ -33,11 +32,12 @@ public class CategoryController {
 
     /**
      * 查询所有分类
+     *
      * @return
      */
-    @ApiOperation(value = "查询所有分类" ,  notes="查询所有分类")
+    @ApiOperation(value = "查询所有分类", notes = "查询所有分类")
     @GetMapping("/api/category")
-    public Result fallAll(){
+    public Result fallAll() {
         return ResultFactory.buildSuccessResult(categoryService.fallAll());
     }
 }

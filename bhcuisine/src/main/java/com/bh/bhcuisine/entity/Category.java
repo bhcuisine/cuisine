@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "tb_category_name")
-@JsonIgnoreProperties({"handler","hibernateLazyInitializer"})
+@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
 public class Category implements Serializable {
 
     /**
@@ -21,7 +21,7 @@ public class Category implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Integer id;
     /**
      * 种类名称

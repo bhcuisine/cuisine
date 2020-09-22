@@ -1,7 +1,7 @@
 package com.bh.bhcuisine.result;
 
 /**
- * @Description:  枚举类
+ * @Description: 枚举类
  * @Author: YTF
  * @Date: 2020/8/7
  */

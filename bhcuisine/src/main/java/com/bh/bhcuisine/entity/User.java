@@ -13,14 +13,14 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "tb_user")
-@JsonIgnoreProperties({"handler","hibernateLazyInitializer"})
+@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
 public class User implements Serializable {
     /**
      * 主键id
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Integer id;
     /**
      * 用户名
@@ -54,7 +54,6 @@ public class User implements Serializable {
      * 身份标识：1-BOSS;2-店主
      */
     private Integer status;
-
 
 
 }

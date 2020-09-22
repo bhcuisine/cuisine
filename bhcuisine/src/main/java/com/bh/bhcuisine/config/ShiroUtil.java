@@ -14,7 +14,7 @@ public class ShiroUtil {
     //加密算法
     public final static String hashAlgorithmName = "SHA-256";
 
-//    public final static String hashAlgorithmName = "SHA-512";
+    //    public final static String hashAlgorithmName = "SHA-512";
     //循环次数
     public final static int hashIterations = 16;
 

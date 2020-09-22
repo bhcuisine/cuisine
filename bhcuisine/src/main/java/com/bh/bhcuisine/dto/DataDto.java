@@ -9,6 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Date;
 
+/**
+ * 存储材料dto对象
+ */
 @Data
 public class DataDto {
     /**

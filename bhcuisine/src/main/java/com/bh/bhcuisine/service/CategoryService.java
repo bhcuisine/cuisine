@@ -15,17 +15,18 @@ public class CategoryService {
 
     /**
      * 分类
+     *
      * @param category
      */
     public void addCategory(Category category) {
         categoryDao.save(category);
     }
 
-    public List<Category> fallAll(){
+    public List<Category> fallAll() {
         return categoryDao.findAll();
     }
 
-    public Category findAllByCategoryName(String categoryName){
+    public Category findAllByCategoryName(String categoryName) {
         return categoryDao.findAllByCategoryName(categoryName);
     }
 

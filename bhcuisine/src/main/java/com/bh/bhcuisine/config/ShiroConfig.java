@@ -25,10 +25,10 @@ public class ShiroConfig {
         return securityManager;
     }
 
-//    过滤链配置
+    //    过滤链配置
     @Bean
-    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager){
-        ShiroFilterFactoryBean shiroFilter=new ShiroFilterFactoryBean();
+    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
+        ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         shiroFilter.setSecurityManager(securityManager);
         return shiroFilter;
     }
@@ -36,22 +36,25 @@ public class ShiroConfig {
 
     //关于Shiro的Bean生命周期的管理
     @Bean("lifecycleBeanPostProcessor")
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
     /**
-     *  开启Shiro的注解(如@RequiresRoles,@RequiresPermissions)
+     * 开启Shiro的注解(如@RequiresRoles,@RequiresPermissions)
+     *
      * @return
      */
     @Bean
-    public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator(){
+    public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
         advisorAutoProxyCreator.setProxyTargetClass(true);
         return advisorAutoProxyCreator;
     }
+
     /**
      * 开启aop注解支持
+     *
      * @param securityManager
      * @return
      */
@@ -61,6 +64,7 @@ public class ShiroConfig {
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
+
     /**
      * cookie对象;
      */

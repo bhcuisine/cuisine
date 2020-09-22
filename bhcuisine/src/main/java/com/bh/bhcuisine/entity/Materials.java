@@ -7,13 +7,14 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+
 /**
  * 数据实体类
  */
 @Data
 @Entity
 @Table(name = "tb_materials")
-@JsonIgnoreProperties({"handler","hibernateLazyInitializer"})
+@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
 public class Materials implements Serializable {
 
     /**
@@ -21,7 +22,7 @@ public class Materials implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Integer id;
     /**
      * 用户门店id

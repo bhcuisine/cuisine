@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * 分类dao层
  */
 @Repository
-public interface CategoryDao extends JpaRepository<Category,Integer>, JpaSpecificationExecutor<Category> {
+public interface CategoryDao extends JpaRepository<Category, Integer>, JpaSpecificationExecutor<Category> {
 
     Category findAllByCategoryName(String StringName);
 }

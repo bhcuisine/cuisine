@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * shiro用于认证用户~授权
+ *
  * @Author:debug (SteadyJack)
  * @Date: 2019/7/30 14:33
  **/
@@ -33,41 +34,44 @@ public class UserRealm extends AuthorizingRealm {
 
     /**
      * 资源-权限分配 ~ 授权 ~ 需要将分配给当前用户的权限列表塞给shiro的权限字段中去
+     *
      * @param principalCollection
      * @return
      */
     @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection){
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         return authorizationInfo;
     }
 
     /**
      * 用户认证 ~ 登录认证
+     *
      * @param authenticationToken
      * @return
      * @throws AuthenticationException
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        UsernamePasswordToken token= (UsernamePasswordToken) authenticationToken;
-        String username=token.getUsername();
-        User user= userDao.getByUsername(username);
+        UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
+        String username = token.getUsername();
+        User user = userDao.getByUsername(username);
         //账户不存在
-        if(user==null){
+        if (user == null) {
             throw new UnknownAccountException("账户不存在");
         }
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user,user.getPassword(), ByteSource.Util.bytes(user.getSalt()),getName());
-        Session session= SecurityUtils.getSubject().getSession();
-        session.setAttribute("user",user);
-        System.out.println("获取session存入的用户"+session.getAttribute("user").toString());
-        session.setTimeout(60*60*24);//设置session 一天
-        System.out.println("当前是"+info);
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), ByteSource.Util.bytes(user.getSalt()), getName());
+        Session session = SecurityUtils.getSubject().getSession();
+        session.setAttribute("user", user);
+        System.out.println("获取session存入的用户" + session.getAttribute("user").toString());
+        session.setTimeout(60 * 60 * 24);//设置session 一天
+        System.out.println("当前是" + info);
         return info;
     }
 
     /**
      * 密码验证器~匹配逻辑 ~ 第二种验证逻辑
+     *
      * @param credentialsMatcher
      */
     @Override

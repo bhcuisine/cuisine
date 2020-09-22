@@ -33,9 +33,10 @@ public class MaterialsService {
 
     /**
      * 材料
+     *
      * @param materials
      */
-    public void addMaterials(Materials materials){
+    public void addMaterials(Materials materials) {
         materialsDao.save(materials);
     }
 
