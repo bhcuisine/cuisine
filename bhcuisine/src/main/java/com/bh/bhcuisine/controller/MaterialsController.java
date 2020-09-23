@@ -162,7 +162,9 @@ public class MaterialsController {
                 }
             }
         }
-        return ResultFactory.buildFailResult("失败");
+            PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
+            Page<Cast> cast = castService.findAllByRAndBranchNameAndRenTime(addTime, branchName, username, pageRequest);
+            return ResultFactory.buildSuccessResult(cast);
     }
 
     /**
