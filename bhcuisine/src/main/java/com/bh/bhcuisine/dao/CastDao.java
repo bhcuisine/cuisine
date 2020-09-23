@@ -71,6 +71,8 @@ public interface CastDao extends JpaRepository<Cast, Integer>, JpaSpecificationE
 
     Cast findAllByBranchName(String branchName);
 
+    @Query(value = "select * from tb_cast where tb_cast.rent_time=?1 AND tb_cast.branch_name=?2",nativeQuery = true)
+    Cast getAllByRentTimeAndBranchName(@Param(value = "rentTime")String rentTime,@Param(value = "branchName") String branchName);
 
     /**
      * 批量查找绩效率
@@ -80,14 +82,14 @@ public interface CastDao extends JpaRepository<Cast, Integer>, JpaSpecificationE
      */
     List<Cast> findAllByIdIn(List<Integer> id);
 
+
     /**
      * 根据时间找盈利实体
      *
      * @param rentTime
      * @return
      */
-    Cast findAllByRentTime(String rentTime);
-
+    Cast findAllByRentTime(@Param(value = "rentTime")String rentTime);
     /**
      * 插入已存在数据
      *
@@ -104,4 +106,17 @@ public interface CastDao extends JpaRepository<Cast, Integer>, JpaSpecificationE
                     @Param(value = "profitTotal") Double profitTotal,
                     @Param(value = "performanceTotal") Double performanceTotal,
                     @Param(value = "id") Integer id);
+
+    @Transactional
+    @Modifying
+    @Query("update Cast c set c.costTotal =:costTotal,c.employeeTotal=:employeeTotal,c.monthTotal=:monthTotal,c.rentTotal=:rentTotal,c.profitTotal=:profitTotal,c.performanceTotal=:performanceTotal where c.rentTime=:rentTime")
+    void updateCast2(@Param(value = "costTotal") Double costTotal,
+                    @Param(value = "employeeTotal") Integer employeeTotal,
+                    @Param(value = "monthTotal") Integer monthTotal,
+                    @Param(value = "rentTotal") Integer rentTotal,
+                    @Param(value = "profitTotal") Double profitTotal,
+                    @Param(value = "performanceTotal") Double performanceTotal,
+                    @Param(value = "rentTime") String rentTime
+                    );
+
 }

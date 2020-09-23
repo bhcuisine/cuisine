@@ -33,4 +33,6 @@ public interface UserDao extends JpaRepository<User, Integer>, JpaSpecificationE
     void updatePassWord(@Param(value = "password") String password, @Param(value = "id") Integer id);
 
 
+
+    User findAllById(@Param(value = "id")Integer id);
 }

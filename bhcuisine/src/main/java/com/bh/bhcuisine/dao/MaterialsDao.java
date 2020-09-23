@@ -44,6 +44,9 @@ public interface MaterialsDao extends JpaRepository<Materials, Integer>, JpaSpec
 
     List<Materials> findAllByUidAndAddTime(@Param(value = "uid") Integer uid,@Param(value = "addTime")String addTime);
 
+    @Query(value = "SELECT  * from tb_materials where tb_materials.uid=?1 and if(?2 !='',tb_materials.add_time=?2,1=1)",nativeQuery = true)
+    List<Materials> getAllByUidAndAddTime(@Param(value = "uid") Integer uid,@Param(value = "addTime")String addTime);
+
     List<Materials> findAllByUidIn(@Param(value = "uid") Integer uid);
 
 
@@ -76,4 +79,6 @@ public interface MaterialsDao extends JpaRepository<Materials, Integer>, JpaSpec
     @Modifying
     @Query("update Materials m set m.status=?1 where m.id=?2")
     void updateById(@Param(value = "status")Integer status,@Param(value = "id")Integer id);
+
+
 }

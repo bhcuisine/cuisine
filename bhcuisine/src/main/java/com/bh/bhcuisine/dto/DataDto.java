@@ -14,6 +14,8 @@ import java.util.Date;
  */
 @Data
 public class DataDto {
+
+    private Integer id;
     /**
      * 用户门店id
      */

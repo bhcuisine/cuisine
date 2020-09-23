@@ -2,9 +2,12 @@ package com.bh.bhcuisine.controller;
 
 import com.bh.bhcuisine.dao.CastDao;
 import com.bh.bhcuisine.dao.MaterialsDao;
+import com.bh.bhcuisine.dao.UserDao;
+import com.bh.bhcuisine.dto.CastDto;
 import com.bh.bhcuisine.dto.DataDto;
 import com.bh.bhcuisine.entity.Cast;
 import com.bh.bhcuisine.entity.Materials;
+import com.bh.bhcuisine.entity.User;
 import com.bh.bhcuisine.result.Result;
 import com.bh.bhcuisine.result.ResultFactory;
 import com.bh.bhcuisine.service.CastService;
@@ -14,6 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -42,36 +46,92 @@ public class MaterialsController {
     @Autowired
     private CastDao castDao;
 
+    @Autowired
+    private UserDao userDao;
+
     private static double total = 0.0;
 
-    private static double cost = 0.0;
+    private static BigDecimal newCost;
 
-    private static double cost2 = 0.0;
+    private static Double cost = 0.0;
+
+    private static BigDecimal cost4;
+
+    private static Double lastCost = 0.0;
+
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/api/materials")
-    public Result addMaterials(@RequestBody DataDto dataDto) {
-        Materials materials = new Materials();
-        System.out.println(dataDto.getCategoryId());
-        materials.setUid(dataDto.getUid());
-        BigDecimal price = new BigDecimal(dataDto.getPrice());
-        BigDecimal quanty = new BigDecimal(dataDto.getQuanty());
+    public Result addMaterials(@RequestBody Materials materials) {
+        System.out.println("添加时间是" + materials.getAddTime());
+        System.out.println("uid是" + materials.getUid());
+        Materials ma = new Materials();
+        ma.setUid(materials.getUid());
+        BigDecimal price = new BigDecimal(materials.getPrice());
+        BigDecimal quanty = new BigDecimal(materials.getQuanty());
         BigDecimal cast = price.multiply(quanty);
+        System.out.println(materials.getPrice());
+        System.out.println(cast);
         BigDecimal cast_total = cast.setScale(2, BigDecimal.ROUND_HALF_DOWN);
         double castTotal = cast_total.doubleValue();
-        materials.setMaterialsTotal(castTotal);
-        materials.setAddTime(dataDto.getAddTime());
-        materials.setMaterialsName(dataDto.getMaterialsName());
-        materials.setCategoryId(dataDto.getCategoryId());
-        materials.setPrice(dataDto.getPrice());
-        materials.setQuanty(dataDto.getQuanty());
+        ma.setMaterialsTotal(castTotal);
+        ma.setAddTime(materials.getAddTime());
+        ma.setMaterialsName(materials.getMaterialsName());
+        ma.setCategoryId(materials.getCategoryId());
+        ma.setPrice(materials.getPrice());
+        ma.setQuanty(materials.getQuanty());
         long l = System.currentTimeMillis();
         Date time = new Date(l);
-        materials.setUpdateTime(time);
-        materials.setStatus(1);
-        materialsService.addMaterials(materials);
-        total += castTotal;
-        return ResultFactory.buildSuccessResult("成功");
+        ma.setUpdateTime(time);
+        ma.setStatus(0);
+        materialsService.addMaterials(ma);
+        lastCost = ma.getMaterialsTotal();
+        String branchName = userDao.findAllById(materials.getUid()).getBranchName();
+        Cast checkCast = castDao.getAllByRentTimeAndBranchName(materials.getAddTime(), branchName);
+        if (checkCast == null) {
+            Cast cast1 = new Cast();
+            cast1.setRentTime(materials.getAddTime());
+            cast1.setPerformance(1);//绩效率
+            cast1.setRentTotal(0);//租金
+            cast1.setEmployeeTotal(0);//人工成本
+            cast1.setMonthTotal(0);//营业额
+            cast1.setCostTotal(lastCost);//原材料成本
+            cast1.setPerformanceTotal(0.0);//绩效
+            cast1.setProfitTotal(0.0);
+            System.out.println(branchName);
+            cast1.setBranchName(branchName);//店名
+            castDao.save(cast1);
+            return ResultFactory.buildSuccessResult("成功");
+        } else {
+            Cast newcast = castDao.getAllByRentTimeAndBranchName(materials.getAddTime(), branchName);//根据时间和店名得到Cast实体类
+            lastCost += newcast.getCostTotal();//累加存入
+            BigDecimal monthMoney = new BigDecimal(newcast.getMonthTotal());//总金额转为bigDecimal
+            BigDecimal costMoney = new BigDecimal(lastCost);//成本转为bigDecimal
+            BigDecimal rentMoney = new BigDecimal(newcast.getRentTotal());//租金转为bigDecimal
+            BigDecimal employMoney = new BigDecimal(newcast.getEmployeeTotal());//获取人工成本
+            BigDecimal profit = monthMoney.subtract(costMoney).subtract(rentMoney).subtract(employMoney);//获取利润值
+            double pro = profit.doubleValue();
+            try {
+                //将绩效率转换为0.00后几位
+                Double per = (Double) NumberFormat.getPercentInstance().parse(newcast.getPerformance() + "%");
+                //将绩效率转换为bigDecimal
+                BigDecimal newPer = new BigDecimal(per);
+                //利润乘以绩效率
+                BigDecimal newProfit = profit.multiply(newPer);
+                //设置保留小数点后2位
+                BigDecimal performance_total = newProfit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+                //将最终绩效转换为double保存数据库
+                double performanceTotal = performance_total.doubleValue();
+                System.out.println("当前" + lastCost);
+                System.out.println("利润值" + pro);
+                castDao.updateCast2(lastCost, newcast.getEmployeeTotal(), newcast.getMonthTotal(), newcast.getRentTotal(), pro, performanceTotal, materials.getAddTime());
+                return ResultFactory.buildSuccessResult("修改成功");
+            } catch (RuntimeException | ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        lastCost = 0.0;
+        return ResultFactory.buildFailResult("失败");
     }
 
     /**
@@ -85,9 +145,9 @@ public class MaterialsController {
     public Result getMaterials(@RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                @RequestParam(value = "pagesize", required = false, defaultValue = "10") Integer pagesize,
                                @RequestParam(required = false) Integer uid,
-                               @RequestParam String addTime) {
+                               @RequestParam(required = false) String addTime) {
         PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
-        Page<Materials> materials = materialsDao.getAll(uid,1,addTime, pageRequest);
+        Page<Materials> materials = materialsDao.getAll(uid, 1, addTime, pageRequest);
         return ResultFactory.buildSuccessResult(materials);
     }
 
@@ -126,59 +186,60 @@ public class MaterialsController {
                                 @RequestParam(required = false) String branchName,
                                 @RequestParam(required = false) String addTime,
                                 @RequestParam(required = false) Integer uid) {
-        List<Materials> materialsList = materialsDao.findAllByUidAndAddTime(uid, addTime);
-        if (materialsList != null) {
-            for (Materials m :
-                    materialsList) {
-                if(m.getStatus()!=0){
-                    cost2 += m.getMaterialsTotal();
-                    System.out.println("计算成本" + cost2);
-                }
-            }
-            Cast c = castService.findAllByRentTime(addTime);
-            if (c != null) {
-                System.out.println(c.toString());
-                BigDecimal monthMoney = new BigDecimal(c.getMonthTotal());//总金额转为bigDecimal
-                BigDecimal costMoney = new BigDecimal(cost2);//成本转为bigDecimal
-                BigDecimal rentMoney = new BigDecimal(c.getRentTotal());//租金转为bigDecimal
-                BigDecimal employMoney = new BigDecimal(c.getEmployeeTotal());//获取人工成本
-                BigDecimal profit = monthMoney.subtract(costMoney).subtract(rentMoney).subtract(employMoney);
-                double pro = profit.doubleValue();
-                System.out.println(pro);
-                try {
-                    //将绩效率转换为0.00后几位
-                    Double per = (Double) NumberFormat.getPercentInstance().parse(c.getPerformance() + "%");
-                    //将绩效率转换为bigDecimal
-                    BigDecimal newPer = new BigDecimal(per);
-                    //利润乘以绩效率
-                    BigDecimal newProfit = profit.multiply(newPer);
-                    //设置保留小数点后2位
-                    BigDecimal performance_total = newProfit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
-                    //将最终绩效转换为double保存数据库
-                    double performanceTotal = performance_total.doubleValue();
-                    castDao.updateCast(cost2, c.getEmployeeTotal(), c.getMonthTotal(), c.getRentTotal(), pro, performanceTotal, c.getId());
-                    PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
-                    Page<Cast> cast = castService.findAllByRAndBranchNameAndRenTime(addTime, branchName, username, pageRequest);
-                    cost2 = 0.0;
-                    return ResultFactory.buildSuccessResult(cast);
-                } catch (RuntimeException | ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-            PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
-            Page<Cast> cast = castService.findAllByRAndBranchNameAndRenTime(addTime, branchName, username, pageRequest);
-            return ResultFactory.buildSuccessResult(cast);
+        PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
+        Page<Cast> cast = castService.findAllByRAndBranchNameAndRenTime(addTime, branchName, username, pageRequest);
+        return ResultFactory.buildSuccessResult(cast);
     }
 
     /**
-     * 删除材料
+     * 删除材料时候更新
      */
     @ApiOperation(value = "删除材料", notes = "删除材料")
     @PostMapping("/api/deleteMaterials")
-    public Result updateMaterials(@RequestParam Integer id) {
-        int status=0;
-        materialsDao.updateById(status,id);
+    public Result deleteMaterials(@RequestBody Materials materials) {
+        Double get=0.0;
+        List<Double> list=new ArrayList();
+        int status = 0;
+        String branchName = userDao.findAllById(materials.getUid()).getBranchName();
+        Cast cast = castDao.getAllByRentTimeAndBranchName(materials.getAddTime(), branchName);
+        Double money=cast.getCostTotal();
+        materialsDao.updateById(status, materials.getId());
+        List<Materials> materials1=materialsDao.findAllByUidAndAddTime(materials.getUid(),materials.getAddTime());
+            for (Materials m:
+                    materials1) {
+                if(m.getStatus()==0){
+                     get=materials.getMaterialsTotal();
+                     list.add(get);
+                }
+            }
+        for (Double d:
+             list) {
+            money-=d;
+        }
+        BigDecimal monthMoney = new BigDecimal(cast.getMonthTotal());//总金额转为bigDecimal
+        BigDecimal costMoney = new BigDecimal(money);//成本转为bigDecimal
+        BigDecimal rentMoney = new BigDecimal(cast.getRentTotal());//租金转为bigDecimal
+        BigDecimal employMoney = new BigDecimal(cast.getEmployeeTotal());//获取人工成本
+        BigDecimal profit = monthMoney.subtract(costMoney).subtract(rentMoney).subtract(employMoney);//获取利润值
+        double pro = profit.doubleValue();
+        try {
+            //将绩效率转换为0.00后几位
+            Double per = (Double) NumberFormat.getPercentInstance().parse(cast.getPerformance() + "%");
+            //将绩效率转换为bigDecimal
+            BigDecimal newPer = new BigDecimal(per);
+            //利润乘以绩效率
+            BigDecimal newProfit = profit.multiply(newPer);
+            //设置保留小数点后2位
+            BigDecimal performance_total = newProfit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+            //将最终绩效转换为double保存数据库
+            double performanceTotal = performance_total.doubleValue();
+            System.out.println("当前" + lastCost);
+            System.out.println("利润值" + pro);
+            castDao.updateCast2(money, cast.getEmployeeTotal(), cast.getMonthTotal(), cast.getRentTotal(), pro, performanceTotal, materials.getAddTime());
+            return ResultFactory.buildSuccessResult("修改成功");
+        } catch (RuntimeException | ParseException e) {
+            e.printStackTrace();
+        }
         return ResultFactory.buildSuccessResult("删除成功");
     }
 
@@ -194,21 +255,13 @@ public class MaterialsController {
      */
     @ApiOperation(value = "勾选插入已存在月份数据也就是修改数据", notes = "插入数据也就是修改数据")
     @PostMapping("/api/addCast2")
-    public Result addCast2(@RequestBody Cast c,
-                           @RequestParam String addTime,
-                           @RequestParam Integer uid
+    public Result addCast2(
+            @RequestBody Cast c
     ) {
-        System.out.println("获取的id是" + c.getId());
-        List<Materials> materialsList = materialsDao.findAllByUidAndAddTime(uid, addTime);
-        for (Materials m :
-                materialsList) {
-            if(m.getStatus()!=0){
-                cost += m.getMaterialsTotal();
-            }
-        }
         Integer performance = castService.findAllById(c.getId()).getPerformance();
 //        Double costTotal = castService.findAllById(c.getId()).getCostTotal();//覆盖数据改成不查而是计算第二次累加的值
-        Double costTotal = cost;
+        Double costTotal = castService.findAllById(c.getId()).getCostTotal();//得到原材料成本
+        System.out.println("当前的金额" + costTotal);
         BigDecimal monthMoney = new BigDecimal(c.getMonthTotal());//总金额转为bigDecimal
         BigDecimal costMoney = new BigDecimal(costTotal);//成本转为bigDecimal
         BigDecimal rentMoney = new BigDecimal(c.getRentTotal());//租金转为bigDecimal
@@ -249,7 +302,7 @@ public class MaterialsController {
     @PostMapping("/api/addCast")
     public Result addCast(
             @RequestBody Cast c) {
-        System.out.println(c.getRentTime());
+        System.out.println("插入时间为" + c.getRentTime());
         Cast cast1 = castService.findAllByRentTime(c.getRentTime());
         if (cast1 != null) {
             return ResultFactory.buildFailResult("已经存在");
@@ -261,8 +314,9 @@ public class MaterialsController {
             cast.setRentTotal(c.getRentTotal());
             cast.setEmployeeTotal(c.getEmployeeTotal());//人工成本
             Double cost = 0.0;
-            cost = total;
+            cost = lastCost;
             cast.setCostTotal(cost);//成本
+            cast.setRentTime(c.getRentTime());
             BigDecimal monthMoney = new BigDecimal(c.getMonthTotal());//总金额转为bigDecimal
             BigDecimal costMoney = new BigDecimal(cost);//成本转为bigDecimal
             BigDecimal rentMoney = new BigDecimal(c.getRentTotal());//租金转为bigDecimal
@@ -283,7 +337,6 @@ public class MaterialsController {
                 BigDecimal performance_total = newProfit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
                 //将最终绩效转换为double保存数据库
                 double performanceTotal = performance_total.doubleValue();
-//            System.out.println("最终绩效"+performanceTotal);
                 cast.setPerformanceTotal(performanceTotal);
                 castService.addCast(cast);
                 return ResultFactory.buildSuccessResult(performanceTotal);
