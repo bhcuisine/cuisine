@@ -47,8 +47,8 @@ public interface MaterialsDao extends JpaRepository<Materials, Integer>, JpaSpec
     List<Materials> findAllByUidIn(@Param(value = "uid") Integer uid);
 
 
-    @Query(value = "select * from tb_materials where if(?1 !='',tb_materials.id=?1,1=1)",nativeQuery = true)
-    Page<Materials> getAll(@Param(value = "id") Integer id,Pageable pageable);
+    @Query(value = "select * from tb_materials where if(?1 !='',tb_materials.uid=?1,1=1) AND tb_materials.status=?2 AND if(?3 !='',tb_materials.add_time=?3,1=1)",nativeQuery = true)
+    Page<Materials> getAll(@Param(value = "uid") Integer uid,@Param(value = "status")Integer status,@Param(value = "addTime")String addTime,Pageable pageable);
     /**
      * 插入已存在数据
      *
@@ -71,4 +71,9 @@ public interface MaterialsDao extends JpaRepository<Materials, Integer>, JpaSpec
      * @param id
      */
     void deleteById(@Param(value = "id") Integer id);
+
+    @Transactional
+    @Modifying
+    @Query("update Materials m set m.status=?1 where m.id=?2")
+    void updateById(@Param(value = "status")Integer status,@Param(value = "id")Integer id);
 }

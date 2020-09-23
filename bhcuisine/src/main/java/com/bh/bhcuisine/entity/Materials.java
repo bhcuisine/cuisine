@@ -69,4 +69,9 @@ public class Materials implements Serializable {
     @JsonProperty("addTime")
     private String addTime;
 
+    /**
+     * 状态
+     */
+    private Integer status;
+
 }

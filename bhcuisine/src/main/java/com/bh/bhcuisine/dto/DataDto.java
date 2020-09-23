@@ -44,4 +44,9 @@ public class DataDto {
      * 添加时间
      */
     private String addTime;
+
+    /**
+     * 状态
+     */
+    private Integer status;
 }

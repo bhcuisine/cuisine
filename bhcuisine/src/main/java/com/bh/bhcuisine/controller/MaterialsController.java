@@ -68,6 +68,7 @@ public class MaterialsController {
         long l = System.currentTimeMillis();
         Date time = new Date(l);
         materials.setUpdateTime(time);
+        materials.setStatus(1);
         materialsService.addMaterials(materials);
         total += castTotal;
         return ResultFactory.buildSuccessResult("成功");
@@ -83,9 +84,10 @@ public class MaterialsController {
     @PostMapping("/api/getMaterials")
     public Result getMaterials(@RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
                                @RequestParam(value = "pagesize", required = false, defaultValue = "10") Integer pagesize,
-                               @RequestParam(required = false) Integer id) {
+                               @RequestParam(required = false) Integer uid,
+                               @RequestParam String addTime) {
         PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
-        Page<Materials> materials = materialsDao.getAll(id, pageRequest);
+        Page<Materials> materials = materialsDao.getAll(uid,1,addTime, pageRequest);
         return ResultFactory.buildSuccessResult(materials);
     }
 
@@ -128,8 +130,10 @@ public class MaterialsController {
         if (materialsList != null) {
             for (Materials m :
                     materialsList) {
-                cost2 += m.getMaterialsTotal();
-                System.out.println("计算成本" + cost2);
+                if(m.getStatus()!=0){
+                    cost2 += m.getMaterialsTotal();
+                    System.out.println("计算成本" + cost2);
+                }
             }
             Cast c = castService.findAllByRentTime(addTime);
             if (c != null) {
@@ -172,8 +176,9 @@ public class MaterialsController {
      */
     @ApiOperation(value = "删除材料", notes = "删除材料")
     @PostMapping("/api/deleteMaterials")
-    public Result deleteMaterials(@RequestParam Integer id) {
-        materialsDao.deleteById(id);
+    public Result updateMaterials(@RequestParam Integer id) {
+        int status=0;
+        materialsDao.updateById(status,id);
         return ResultFactory.buildSuccessResult("删除成功");
     }
 
@@ -197,7 +202,9 @@ public class MaterialsController {
         List<Materials> materialsList = materialsDao.findAllByUidAndAddTime(uid, addTime);
         for (Materials m :
                 materialsList) {
-            cost += m.getMaterialsTotal();
+            if(m.getStatus()!=0){
+                cost += m.getMaterialsTotal();
+            }
         }
         Integer performance = castService.findAllById(c.getId()).getPerformance();
 //        Double costTotal = castService.findAllById(c.getId()).getCostTotal();//覆盖数据改成不查而是计算第二次累加的值
