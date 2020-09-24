@@ -55,5 +55,14 @@ public class UserService {
         return userDao.findAll();
     }
 
+    /**
+     * 修改密码
+     * @param password
+     * @param username
+     */
+    public void UpdateUserPassword(String password,String username){
+        userDao.UpdateUserPassword(password,username);
+    }
+
 
 }

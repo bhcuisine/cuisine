@@ -37,16 +37,21 @@ public class LoginController {
     @PostMapping(value = "/api/login")
     public Result login(@RequestBody User reuser
     ) {
-        User user = userService.getByUsername(reuser.getUsername());
-        //提交登录
-        Subject subject = SecurityUtils.getSubject();
-        if (!subject.isAuthenticated()) {
-            UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), reuser.getPassword());
-            token.setRememberMe(true);
-            subject.login(token);
-            return ResultFactory.buildSuccessResult(user);
-        } else {
-            return ResultFactory.buildFailResult("失败");
+        String username=reuser.getUsername().replaceAll("　| ", "");//去除全角和半角空格
+        User user = userService.getByUsername(username);//根据用户名得到用户实体
+        if(user==null){
+            return ResultFactory.buildFailResult("用户不存在");
+        }else{
+            //提交登录
+            Subject subject = SecurityUtils.getSubject();
+            if (!subject.isAuthenticated()) {
+                UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), reuser.getPassword());
+                token.setRememberMe(true);//实现rembeRme
+                subject.login(token);//调用shiro的登录方法
+                return ResultFactory.buildSuccessResult(user);
+            } else {
+                return ResultFactory.buildFailResult("失败");
+            }
         }
     }
 

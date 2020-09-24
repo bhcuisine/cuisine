@@ -56,8 +56,6 @@ public class UserController {
     private CastDao castDao;
 
 
-
-
     @ApiOperation(value = "管理员查询", notes = "管理员查询")
     @GetMapping(value = "/api/adminSearch")
     public Result getSearchData(@RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
@@ -104,9 +102,9 @@ public class UserController {
                 ids) {
             Cast cast = castService.findAllById(id);
             castService.updatePerformanceByBranchNameIn(performanceDto.getPerformance(), id);
-            Integer monthTotal = cast.getMonthTotal();
-            Integer employeeTotal = cast.getEmployeeTotal();
-            Integer rentTotal = cast.getRentTotal();
+            Double monthTotal = cast.getMonthTotal();
+            Double employeeTotal = cast.getEmployeeTotal();
+            Double rentTotal = cast.getRentTotal();
             Double costTotal = cast.getCostTotal();
             BigDecimal monthMoney = new BigDecimal(monthTotal);//总金额转为bigDecimal
             BigDecimal costMoney = new BigDecimal(costTotal);//成本转为bigDecimal
@@ -130,7 +128,6 @@ public class UserController {
                 e.printStackTrace();
             }
         }
-        System.out.println("保存成功");
         return ResultFactory.buildSuccessResult("成功");
     }
 
@@ -142,7 +139,6 @@ public class UserController {
     public Result getListPerformance(
             @RequestParam Integer id
     ) {
-        System.out.println("绩效率id是" + id);
         Cast cast = castDao.findAllById(id);
         Integer performance = cast.getPerformance();
         return ResultFactory.buildSuccessResult(performance);
@@ -164,9 +160,9 @@ public class UserController {
         System.out.println(c.getPerformance());
         Cast cast = castService.findAllById(c.getId());
         castService.updatePerformanceByBranchNameIn(c.getPerformance(), c.getId());
-        Integer monthTotal = cast.getMonthTotal();
-        Integer employeeTotal = cast.getEmployeeTotal();
-        Integer rentTotal = cast.getRentTotal();
+        Double monthTotal =cast.getMonthTotal() ;
+        Double employeeTotal = cast.getEmployeeTotal();
+        Double rentTotal = cast.getRentTotal();
         Double costTotal = cast.getCostTotal();
         BigDecimal monthMoney = new BigDecimal(monthTotal);//总金额转为bigDecimal
         BigDecimal costMoney = new BigDecimal(costTotal);//成本转为bigDecimal
@@ -189,7 +185,6 @@ public class UserController {
         } catch (RuntimeException | ParseException e) {
             e.printStackTrace();
         }
-        System.out.println("保存成功");
         return ResultFactory.buildSuccessResult("成功");
     }
 
@@ -271,6 +266,24 @@ public class UserController {
         }
     }
 
-
+    /**
+     * 重置用户密码
+     * @param user
+     * @return
+     */
+    @ApiOperation(value = "重置密码", notes = "重置密码")
+    @PostMapping(value = "/api/resetPassWord")
+    public Result resetPassWord(@RequestBody User user){
+        User u=userService.getByUsername(user.getUsername());
+        String username=u.getUsername();
+        if(u!=null){
+            String password="123";
+            String newpassword=ShiroUtil.sha256(password,u.getSalt());
+            userService.UpdateUserPassword(newpassword,username);
+            return ResultFactory.buildSuccessResult("修改密码成功");
+        }else{
+            return ResultFactory.buildFailResult("修改失败");
+        }
+    }
 }
 

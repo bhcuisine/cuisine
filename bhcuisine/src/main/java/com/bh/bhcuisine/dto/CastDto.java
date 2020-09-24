@@ -1,12 +1,6 @@
 package com.bh.bhcuisine.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 @Data
 public class CastDto {
@@ -24,21 +18,21 @@ public class CastDto {
      * 总营业额
      */
 
-    private Integer monthTotal;
+    private Double  monthTotal;
 
 
     /**
      * 人工费用
      */
 
-    private Integer employeeTotal;
+    private Double  employeeTotal;
 
 
     /**
      * 房租
      */
 
-    private Integer rentTotal;
+    private Double rentTotal;
 
     /**
      * 材料成本

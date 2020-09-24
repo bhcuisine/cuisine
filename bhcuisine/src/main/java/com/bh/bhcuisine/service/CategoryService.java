@@ -2,7 +2,6 @@ package com.bh.bhcuisine.service;
 
 import com.bh.bhcuisine.dao.CategoryDao;
 import com.bh.bhcuisine.entity.Category;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +21,19 @@ public class CategoryService {
         categoryDao.save(category);
     }
 
+    /**
+     * 得到种类集合
+     * @return
+     */
     public List<Category> fallAll() {
         return categoryDao.findAll();
     }
 
+    /**
+     * 根据种类名得到种类实体
+     * @param categoryName
+     * @return
+     */
     public Category findAllByCategoryName(String categoryName) {
         return categoryDao.findAllByCategoryName(categoryName);
     }

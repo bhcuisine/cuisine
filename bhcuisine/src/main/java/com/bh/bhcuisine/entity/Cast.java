@@ -33,7 +33,7 @@ public class Cast {
      */
     @Column(name = "month_total")
     @JsonProperty("monthTotal")
-    private Integer monthTotal;
+    private Double monthTotal;
 
 
     /**
@@ -41,7 +41,7 @@ public class Cast {
      */
     @Column(name = "employee_total")
     @JsonProperty("employeeTotal")
-    private Integer employeeTotal;
+    private Double employeeTotal;
 
 
     /**
@@ -49,7 +49,7 @@ public class Cast {
      */
     @Column(name = "rent_total")
     @JsonProperty("rentTotal")
-    private Integer rentTotal;
+    private Double rentTotal;
 
     /**
      * 材料成本

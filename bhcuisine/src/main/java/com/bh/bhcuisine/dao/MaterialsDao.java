@@ -1,6 +1,7 @@
 package com.bh.bhcuisine.dao;
 
 
+import com.bh.bhcuisine.entity.Cast;
 import com.bh.bhcuisine.entity.Materials;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -41,16 +42,30 @@ public interface MaterialsDao extends JpaRepository<Materials, Integer>, JpaSpec
             "AND if(?3 !='',tb_materials.add_time=?3,1=1) ", nativeQuery = true)
     Page<Materials> getAllByUserNameAndBranchNameAndAddTime(String username, String branchName, String addTime, Pageable pageable);
 
-
+    /**
+     * 根据uid和添加时间得到材料list集合
+     * @param uid
+     * @param addTime
+     * @return
+     */
     List<Materials> findAllByUidAndAddTime(@Param(value = "uid") Integer uid,@Param(value = "addTime")String addTime);
+
+
 
     @Query(value = "SELECT  * from tb_materials where tb_materials.uid=?1 and if(?2 !='',tb_materials.add_time=?2,1=1)",nativeQuery = true)
     List<Materials> getAllByUidAndAddTime(@Param(value = "uid") Integer uid,@Param(value = "addTime")String addTime);
 
     List<Materials> findAllByUidIn(@Param(value = "uid") Integer uid);
 
-
-    @Query(value = "select * from tb_materials where if(?1 !='',tb_materials.uid=?1,1=1) AND tb_materials.status=?2 AND if(?3 !='',tb_materials.add_time=?3,1=1)",nativeQuery = true)
+    /**
+     * 根据uid,状态，添加时间，分页得到数据材料集合
+     * @param uid
+     * @param status
+     * @param addTime
+     * @param pageable
+     * @return
+     */
+    @Query(value = "select * from tb_materials where if(?1 !='',tb_materials.uid=?1,1=1) AND if(?2 !='',tb_materials.status=?2,1=1) AND if(?3 !='',tb_materials.add_time=?3,1=1)",nativeQuery = true)
     Page<Materials> getAll(@Param(value = "uid") Integer uid,@Param(value = "status")Integer status,@Param(value = "addTime")String addTime,Pageable pageable);
     /**
      * 插入已存在数据
@@ -65,7 +80,7 @@ public interface MaterialsDao extends JpaRepository<Materials, Integer>, JpaSpec
                          @Param(value = "updateTime") Date updateTime,
                          @Param(value = "materialsTotal") Double materialsTotal,
                          @Param(value = "price") Double price,
-                         @Param(value = "quanty") Integer quanty,
+                         @Param(value = "quanty") Double quanty,
                          @Param(value = "id") Integer id);
 
 
@@ -75,10 +90,24 @@ public interface MaterialsDao extends JpaRepository<Materials, Integer>, JpaSpec
      */
     void deleteById(@Param(value = "id") Integer id);
 
+    /**
+     * 取代物理删除，根据id把材料的状态改变为0不计算
+     * @param status
+     * @param id
+     */
     @Transactional
     @Modifying
     @Query("update Materials m set m.status=?1 where m.id=?2")
     void updateById(@Param(value = "status")Integer status,@Param(value = "id")Integer id);
 
+    /**
+     * 根据id得到材料实体
+     * @param id
+     * @return
+     */
+    Materials findAllById(@Param(value = "id")Integer id);
+
+    @Query(value = "SELECT * FROM tb_materials  WHERE tb_materials.uid=?1 AND tb_materials.add_time=?2 AND tb_materials.status=1 group by tb_materials.id",nativeQuery = true)
+    List<Materials> getMoney(@Param(value = "uid")Integer uid, @Param(value = "addTime")String addTime);
 
 }

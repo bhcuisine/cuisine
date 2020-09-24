@@ -100,20 +100,30 @@ public interface CastDao extends JpaRepository<Cast, Integer>, JpaSpecificationE
     @Modifying
     @Query("update Cast c set c.costTotal =:costTotal,c.employeeTotal=:employeeTotal,c.monthTotal=:monthTotal,c.rentTotal=:rentTotal,c.profitTotal=:profitTotal,c.performanceTotal=:performanceTotal where c.id=:id")
     void updateCast(@Param(value = "costTotal") Double costTotal,
-                    @Param(value = "employeeTotal") Integer employeeTotal,
-                    @Param(value = "monthTotal") Integer monthTotal,
-                    @Param(value = "rentTotal") Integer rentTotal,
+                    @Param(value = "employeeTotal") Double employeeTotal,
+                    @Param(value = "monthTotal") Double monthTotal,
+                    @Param(value = "rentTotal") Double rentTotal,
                     @Param(value = "profitTotal") Double profitTotal,
                     @Param(value = "performanceTotal") Double performanceTotal,
                     @Param(value = "id") Integer id);
 
+    /**
+     * 更新数据
+     * @param costTotal
+     * @param employeeTotal
+     * @param monthTotal
+     * @param rentTotal
+     * @param profitTotal
+     * @param performanceTotal
+     * @param rentTime
+     */
     @Transactional
     @Modifying
     @Query("update Cast c set c.costTotal =:costTotal,c.employeeTotal=:employeeTotal,c.monthTotal=:monthTotal,c.rentTotal=:rentTotal,c.profitTotal=:profitTotal,c.performanceTotal=:performanceTotal where c.rentTime=:rentTime")
     void updateCast2(@Param(value = "costTotal") Double costTotal,
-                    @Param(value = "employeeTotal") Integer employeeTotal,
-                    @Param(value = "monthTotal") Integer monthTotal,
-                    @Param(value = "rentTotal") Integer rentTotal,
+                    @Param(value = "employeeTotal") Double employeeTotal,
+                    @Param(value = "monthTotal") Double monthTotal,
+                    @Param(value = "rentTotal") Double rentTotal,
                     @Param(value = "profitTotal") Double profitTotal,
                     @Param(value = "performanceTotal") Double performanceTotal,
                     @Param(value = "rentTime") String rentTime

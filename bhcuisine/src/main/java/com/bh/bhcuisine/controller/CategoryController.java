@@ -8,11 +8,23 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 种类controller
+ */
 @RestController
 public class CategoryController {
+
+    /**
+     * 注入种类service层
+     */
     @Autowired
     private CategoryService categoryService;
 
+    /**
+     * 添加分类
+     * @param c
+     * @return
+     */
     @ApiOperation(value = "分类", notes = "分类")
     @PostMapping("/api/addcategory")
     public Result addCategory(@RequestBody Category c) {

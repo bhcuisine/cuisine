@@ -48,7 +48,7 @@ public class Materials implements Serializable {
     /**
      * 数量
      */
-    private Integer quanty;
+    private Double quanty;
     /**
      * 每个材料成本materials_total
      */
@@ -73,5 +73,6 @@ public class Materials implements Serializable {
      * 状态
      */
     private Integer status;
+
 
 }
