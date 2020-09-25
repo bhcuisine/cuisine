@@ -37,11 +37,11 @@ public class LoginController {
     @PostMapping(value = "/api/login")
     public Result login(@RequestBody User reuser
     ) {
-        String username=reuser.getUsername().replaceAll("　| ", "");//去除全角和半角空格
+        String username = reuser.getUsername().replaceAll("　| ", "");//去除全角和半角空格
         User user = userService.getByUsername(username);//根据用户名得到用户实体
-        if(user==null){
+        if (user == null) {
             return ResultFactory.buildFailResult("用户不存在");
-        }else{
+        } else {
             //提交登录
             Subject subject = SecurityUtils.getSubject();
             if (!subject.isAuthenticated()) {
@@ -65,7 +65,6 @@ public class LoginController {
     @PostMapping(value = "/api/resetPassword")
     public Result resetPassword(
             @RequestBody User reuser
-//            @RequestParam String newPassword
     ) {
         String username = reuser.getUsername();
         User user = userService.getByUsername(username);
@@ -78,7 +77,6 @@ public class LoginController {
     @ApiOperation(value = "用户退出登录", notes = "用户退出登录")
     @PostMapping("/api/loginout")
     public Result logout() {
-//        ShiroUtil.logout();
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
         return ResultFactory.buildSuccessResult("退出成功");

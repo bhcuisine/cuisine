@@ -160,8 +160,6 @@ public class UserController {
     public Result update(
             @RequestBody Cast c
     ) {
-        System.out.println(c.getId());
-        System.out.println(c.getPerformance());
         Cast cast = castService.findAllById(c.getId());
         castService.updatePerformanceByBranchNameIn(c.getPerformance(), c.getId());
         Double monthTotal =cast.getMonthTotal() ;
@@ -240,21 +238,6 @@ public class UserController {
      * @param branchLocation 店位置
      * @param performance    绩效
      * @return
-     *
-     *
-     *    User user = new User();
-     *                 user.setUsername(reuser.getUsername());
-     *                 //保存密码
-     *                 String salt = SaltUtil.getSalt();
-     *                 String password = "123";
-     *                 user.setPassword(ShiroUtil.sha256(password, salt));
-     *                 user.setSalt(salt);
-     *                 user.setBranchLocation(reuser.getBranchLocation());
-     *                 user.setBranchName(reuser.getBranchName());
-     *                 user.setEnabled(1);
-     *                 user.setStatus(2);
-     *                 userService.addUser(user);
-     *                 return ResultFactory.buildSuccessResult("成功");
      */
     @ApiOperation(value = "添加新店", notes = "添加新店")
     @PostMapping(value = "/api/saveUser")

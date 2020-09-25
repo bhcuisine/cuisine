@@ -64,8 +64,6 @@ public class MaterialsController {
     @ApiOperation(value = "新增材料", notes = "新增材料")
     @PostMapping("/api/materials")
     public Result addMaterials(@RequestBody Materials materials) {
-        System.out.println("添加时间是" + materials.getAddTime());
-        System.out.println("uid是" + materials.getUid());
         Materials ma = new Materials();
         ma.setUid(materials.getUid());//设置店的uid属于哪个店
         BigDecimal price = new BigDecimal(materials.getPrice());//把价格转换为bigDecimal对象
@@ -106,7 +104,6 @@ public class MaterialsController {
         } else {
             //如果不为空累加存入价格
             Cast newcast = castDao.getAllByRentTimeAndBranchName(materials.getAddTime(), branchName);//根据时间和店名得到Cast实体类
-
             lastCost += newcast.getCostTotal();//累加存入
             BigDecimal monthMoney = new BigDecimal(newcast.getMonthTotal());//总金额转为bigDecimal
             BigDecimal costMoney = new BigDecimal(lastCost);//成本转为bigDecimal
@@ -125,8 +122,6 @@ public class MaterialsController {
                 BigDecimal performance_total = newProfit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
                 //将最终绩效转换为double保存数据库
                 double performanceTotal = performance_total.doubleValue();
-                System.out.println("当前" + lastCost);
-                System.out.println("利润值" + pro);
                 castDao.updateCast2(lastCost, newcast.getEmployeeTotal(), newcast.getMonthTotal(), newcast.getRentTotal(), pro, performanceTotal, materials.getAddTime());
                 return ResultFactory.buildSuccessResult("修改成功");
             } catch (RuntimeException | ParseException e) {
@@ -167,9 +162,7 @@ public class MaterialsController {
         double castTotal = cast_total.doubleValue();//获取一次材料成本
         //更新原材料需要的前端参数为价格，数量，id，材料名称
         materialsDao.updateMaterials(m.getMaterialsName(), time, castTotal, m.getPrice(), m.getQuanty(), m.getId());//更新原材料
-        System.out.println("用户uid是"+m.getUid()+"用户添加时间"+m.getAddTime());
         List<Materials> materials=materialsDao.getMoney(m.getUid(),m.getAddTime());//根据材料uid和添加时间获取材料list集合
-        System.out.println(materials.toString());
         double costMoney3=0.0;//定义double类型参数
         BigDecimal cost1=new BigDecimal(costMoney3);//封装成bidDecimal对象
         for (Materials mater:
@@ -178,9 +171,7 @@ public class MaterialsController {
             cost1=cost1.add(cost2);
         }
         double costMoney2=cost1.doubleValue();
-        System.out.println("当前的total"+costMoney2);
         String branchName=userDao.findAllById(m.getUid()).getBranchName();//根据材料uid获取店名
-        System.out.println("UID是"+m.getUid()+"店名"+branchName+"添加时间"+m.getAddTime());
         Cast cast1=castDao.getAllByRentTimeAndBranchName(m.getAddTime(),branchName);
         BigDecimal monthMoney = new BigDecimal(cast1.getMonthTotal());//总金额转为bigDecimal
         BigDecimal costMoney = new BigDecimal(costMoney2);//成本转为bigDecimal
@@ -253,7 +244,6 @@ public class MaterialsController {
     @ApiOperation(value = "删除材料", notes = "删除材料")
     @PostMapping("/api/deleteMaterials")
     public Result deleteMaterials(@RequestBody Materials materials) {
-        System.out.println("获取删除uid"+materials.getUid()+"获取删除addTime"+materials.getAddTime()+"获取删除id"+materials.getId());
         int status = 0;
         String branchName = userDao.findAllById(materials.getUid()).getBranchName();//根据材料uid得到店名
         Cast cast = castDao.getAllByRentTimeAndBranchName(materials.getAddTime(), branchName);//根据店名和时间得到具体月份数据实体
@@ -313,14 +303,12 @@ public class MaterialsController {
         Integer performance = castService.findAllById(c.getId()).getPerformance();
 //        Double costTotal = castService.findAllById(c.getId()).getCostTotal();//覆盖数据改成不查而是计算第二次累加的值
         double costTotal = castService.findAllById(c.getId()).getCostTotal();//得到原材料成本
-        System.out.println("当前的金额" + costTotal);
         BigDecimal monthMoney = new BigDecimal(c.getMonthTotal());//总金额转为bigDecimal
         BigDecimal costMoney = new BigDecimal(costTotal);//成本转为bigDecimal
         BigDecimal rentMoney = new BigDecimal(c.getRentTotal());//租金转为bigDecimal
         BigDecimal employMoney = new BigDecimal(c.getEmployeeTotal());//获取人工成本
         BigDecimal profit = monthMoney.subtract(costMoney).subtract(rentMoney).subtract(employMoney);
         double pro = profit.doubleValue();
-        System.out.println(pro);
         try {
             Double per = (Double) NumberFormat.getPercentInstance().parse(performance + "%");//将绩效率转换为0.00后几位
             BigDecimal newPer = new BigDecimal(per); //将绩效率转换为bigDecimal
