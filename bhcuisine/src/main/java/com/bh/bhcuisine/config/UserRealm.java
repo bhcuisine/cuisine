@@ -64,7 +64,7 @@ public class UserRealm extends AuthorizingRealm {
         Session session = SecurityUtils.getSubject().getSession();
         session.setAttribute("user", user);
         System.out.println("获取session存入的用户" + session.getAttribute("user").toString());
-        session.setTimeout(60 * 60 * 24);//设置session 一天
+        session.setTimeout(60 * 60);//设置session 一天
         return info;
     }
 
