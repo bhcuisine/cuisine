@@ -272,8 +272,8 @@ public class UserController {
      * @return
      */
     @ApiOperation(value = "重置密码", notes = "重置密码")
-    @PostMapping(value = "/api/resetPassWord")
-    public Result resetPassWord(@RequestBody User user){
+    @PostMapping(value = "/api/resetnewPassWord")
+    public Result resetnewPassWord(@RequestBody User user){
         User u=userService.getByUsername(user.getUsername());
         String username=u.getUsername();
         if(u!=null){
