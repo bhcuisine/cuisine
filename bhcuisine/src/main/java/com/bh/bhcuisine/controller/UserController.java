@@ -4,6 +4,7 @@ import com.bh.bhcuisine.config.SaltUtil;
 import com.bh.bhcuisine.config.ShiroUtil;
 import com.bh.bhcuisine.dao.CastDao;
 import com.bh.bhcuisine.dao.MaterialsDao;
+import com.bh.bhcuisine.dao.UserDao;
 import com.bh.bhcuisine.dto.PerformanceDto;
 import com.bh.bhcuisine.entity.Cast;
 import com.bh.bhcuisine.entity.Materials;
@@ -54,6 +55,9 @@ public class UserController {
 
     @Autowired
     private CastDao castDao;
+
+    @Autowired
+    private UserDao userDao;
 
 
     @ApiOperation(value = "管理员查询", notes = "管理员查询")
@@ -236,34 +240,48 @@ public class UserController {
      * @param branchLocation 店位置
      * @param performance    绩效
      * @return
+     *
+     *
+     *    User user = new User();
+     *                 user.setUsername(reuser.getUsername());
+     *                 //保存密码
+     *                 String salt = SaltUtil.getSalt();
+     *                 String password = "123";
+     *                 user.setPassword(ShiroUtil.sha256(password, salt));
+     *                 user.setSalt(salt);
+     *                 user.setBranchLocation(reuser.getBranchLocation());
+     *                 user.setBranchName(reuser.getBranchName());
+     *                 user.setEnabled(1);
+     *                 user.setStatus(2);
+     *                 userService.addUser(user);
+     *                 return ResultFactory.buildSuccessResult("成功");
      */
     @ApiOperation(value = "添加新店", notes = "添加新店")
     @PostMapping(value = "/api/saveUser")
     public Result addUser(@RequestBody User reuser
-//            @RequestParam String username,
-//                          @RequestParam(required = false) String password,
-//                          @RequestParam(required = false,defaultValue = "1") Integer enabled,
-//                          @RequestParam String branchName,
-//                          @RequestParam String branchLocation
     ) {
         User u = userService.getByUsername(reuser.getUsername());
+        User u2=userDao.findAllByBranchName(reuser.getBranchName());
         if (u != null) {
             return ResultFactory.buildFailResult("已存在");
-        } else {
-            User user = new User();
-            user.setUsername(reuser.getUsername());
-            //保存密码
-            String salt = SaltUtil.getSalt();
-            String password = "123";
-            user.setPassword(ShiroUtil.sha256(password, salt));
-            user.setSalt(salt);
-            user.setBranchLocation(reuser.getBranchLocation());
-            user.setBranchName(reuser.getBranchName());
-            user.setEnabled(1);
-            user.setStatus(2);
-            userService.addUser(user);
-            return ResultFactory.buildSuccessResult("成功");
+        } else if(u2!=null) {
+            return ResultFactory.buildFailResult("已存在");
         }
+        else {
+                    User user = new User();
+                    user.setUsername(reuser.getUsername());
+                    //保存密码
+                    String salt = SaltUtil.getSalt();
+                    String password = "123";
+                    user.setPassword(ShiroUtil.sha256(password, salt));
+                    user.setSalt(salt);
+                    user.setBranchLocation(reuser.getBranchLocation());
+                    user.setBranchName(reuser.getBranchName());
+                    user.setEnabled(1);
+                    user.setStatus(2);
+                    userService.addUser(user);
+                    return ResultFactory.buildSuccessResult("成功");
+                }
     }
 
     /**
@@ -273,8 +291,8 @@ public class UserController {
      */
     @ApiOperation(value = "重置密码", notes = "重置密码")
     @PostMapping(value = "/api/resetnewPassWord")
-    public Result resetnewPassWord(@RequestBody User user){
-        User u=userService.getByUsername(user.getUsername());
+    public Result resetnewPassWord(@RequestBody User newuser){
+        User u=userService.getByUsername(newuser.getUsername());
         String username=u.getUsername();
         if(u!=null){
             String password="123";

@@ -40,7 +40,7 @@ public class CastService {
      * @return
      */
     public Page<Cast> findAllByRAndBranchNameAndRenTime2(String rentTime, String branchName, Pageable pageable) {
-        return castDao.findAllByRAndBranchNameAndRenTime2(rentTime, branchName, pageable);
+        return castDao.findAllByRAndBranchNameAndRenTime2(rentTime, branchName,pageable);
     }
 
     /**

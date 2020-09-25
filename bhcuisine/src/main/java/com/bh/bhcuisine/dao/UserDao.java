@@ -1,6 +1,7 @@
 package com.bh.bhcuisine.dao;
 
 import com.bh.bhcuisine.entity.User;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,6 +22,12 @@ public interface UserDao extends JpaRepository<User, Integer>, JpaSpecificationE
      * @return
      */
     User getByUsername(String username);
+
+    /**
+     * 根据店名查找实体类
+     * @return
+     */
+    User findAllByBranchName(String branchName);
 
     /**
      * 修改密码
