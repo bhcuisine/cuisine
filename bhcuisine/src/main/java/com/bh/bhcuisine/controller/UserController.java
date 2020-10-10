@@ -10,6 +10,7 @@ import com.bh.bhcuisine.entity.Cast;
 import com.bh.bhcuisine.entity.Materials;
 import com.bh.bhcuisine.entity.User;
 import com.bh.bhcuisine.result.Result;
+import com.bh.bhcuisine.result.ResultCode;
 import com.bh.bhcuisine.result.ResultFactory;
 import com.bh.bhcuisine.service.CastService;
 import com.bh.bhcuisine.service.MaterialsService;
@@ -100,7 +101,6 @@ public class UserController {
     public Result savePerformance(@RequestBody PerformanceDto performanceDto
 //            @RequestParam Integer performance,@RequestParam List<Integer> ids
     ) {
-        System.out.println(performanceDto.getIds());
         List<Integer> ids = performanceDto.getIds();
         for (Integer id :
                 ids) {
@@ -144,6 +144,7 @@ public class UserController {
             @RequestParam Integer id
     ) {
         Cast cast = castDao.findAllById(id);
+        //System.out.println("==============="+cast);
         Integer performance = cast.getPerformance();
         return ResultFactory.buildSuccessResult(performance);
     }
@@ -162,7 +163,7 @@ public class UserController {
     ) {
         Cast cast = castService.findAllById(c.getId());
         castService.updatePerformanceByBranchNameIn(c.getPerformance(), c.getId());
-        Double monthTotal =cast.getMonthTotal() ;
+        Double monthTotal = cast.getMonthTotal();
         Double employeeTotal = cast.getEmployeeTotal();
         Double rentTotal = cast.getRentTotal();
         Double costTotal = cast.getCostTotal();
@@ -199,7 +200,6 @@ public class UserController {
     @GetMapping("/api/getAllBranchName")
     public Result getAllCast() {
         List<User> users = userService.getAllBranchName();
-        System.out.println(users);
         List<User> newUser = new ArrayList();
         Iterator<User> it = users.iterator();
         while (it.hasNext()) {
@@ -222,7 +222,6 @@ public class UserController {
     @ApiOperation(value = "根据id得到盈利实体", notes = "根据id得到盈利实体")
     @GetMapping("/api/getCast")
     public Result getCast(@RequestParam Integer id) {
-        System.out.println(id);
         Cast cast = castService.findAllById(id);
         return ResultFactory.buildSuccessResult(cast);
     }
@@ -244,45 +243,52 @@ public class UserController {
     public Result addUser(@RequestBody User reuser
     ) {
         User u = userService.getByUsername(reuser.getUsername());
-        User u2=userDao.findAllByBranchName(reuser.getBranchName());
+        User u2 = userDao.findAllByBranchName(reuser.getBranchName());
         if (u != null) {
             return ResultFactory.buildFailResult("已存在");
-        } else if(u2!=null) {
+        } else if (u2 != null) {
             return ResultFactory.buildFailResult("已存在");
+        } else {
+            User user = new User();
+            user.setUsername(reuser.getUsername());
+            //保存密码
+            String salt = SaltUtil.getSalt();
+            String password = "123";
+            user.setPassword(ShiroUtil.sha256(password, salt));
+            user.setSalt(salt);
+            user.setBranchLocation(reuser.getBranchLocation());
+            user.setBranchName(reuser.getBranchName());
+            user.setEnabled(1);
+            user.setStatus(2);
+            userService.addUser(user);
+            return ResultFactory.buildSuccessResult("成功");
         }
-        else {
-                    User user = new User();
-                    user.setUsername(reuser.getUsername());
-                    //保存密码
-                    String salt = SaltUtil.getSalt();
-                    String password = "123";
-                    user.setPassword(ShiroUtil.sha256(password, salt));
-                    user.setSalt(salt);
-                    user.setBranchLocation(reuser.getBranchLocation());
-                    user.setBranchName(reuser.getBranchName());
-                    user.setEnabled(1);
-                    user.setStatus(2);
-                    userService.addUser(user);
-                    return ResultFactory.buildSuccessResult("成功");
-                }
     }
 
     /**
      * 重置用户密码
+     *
      * @param user
      * @return
      */
     @ApiOperation(value = "重置密码", notes = "重置密码")
     @PostMapping(value = "/api/resetnewPassWord")
-    public Result resetnewPassWord(@RequestBody User newuser){
-        User u=userService.getByUsername(newuser.getUsername());
-        String username=u.getUsername();
-        if(u!=null){
-            String password="123";
-            String newpassword=ShiroUtil.sha256(password,u.getSalt());
-            userService.UpdateUserPassword(newpassword,username);
-            return ResultFactory.buildSuccessResult("修改密码成功");
-        }else{
+    public Result resetnewPassWord(@RequestBody User newuser) {
+        User u;
+        String username;
+        try {
+            u = userService.getByUsername(newuser.getUsername());
+            username = u.getUsername();
+        } catch (NullPointerException e) {
+            return ResultFactory.buildFailResult("用户不存在");
+        }
+
+        if (u != null) {
+            String password = "123";
+            String newpassword = ShiroUtil.sha256(password, u.getSalt());
+            userService.UpdateUserPassword(newpassword, username);
+            return ResultFactory.buildSuccessResult(null);
+        } else {
             return ResultFactory.buildFailResult("修改失败");
         }
     }

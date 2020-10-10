@@ -63,7 +63,7 @@ public class UserRealm extends AuthorizingRealm {
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), ByteSource.Util.bytes(user.getSalt()), getName());
         Session session = SecurityUtils.getSubject().getSession();
         session.setAttribute("user", user);
-        System.out.println("获取session存入的用户" + session.getAttribute("user").toString());
+        //System.out.println("获取session存入的用户" + session.getAttribute("user").toString());
         session.setTimeout(60 * 60);//设置session 一天
         return info;
     }

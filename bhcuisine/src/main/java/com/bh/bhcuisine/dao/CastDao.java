@@ -24,16 +24,6 @@ public interface CastDao extends JpaRepository<Cast, Integer>, JpaSpecificationE
     /**
      * 按月份查询营业额，人工，房租
      *
-     * @param rentTime
-     * @param branchName if(?1 !='',tb_cast.rent_time=?1,1=1) " +
-     *                   "AND if(?2 !='',tb_cast.branch_name=?2,1=1) AND if(?3 !='',tb_user.username=?3,1=1)
-     *                   <p>
-     *                   <p>
-     *                   tb_cast.id,tb_user.id AS userId,tb_user.username,tb_user.password," +
-     *                   "            tb_user.salt,tb_user.enabled,tb_user.branch_name AS b,tb_user.status,tb_user.branch_location,tb_cast.branch_name,tb_cast.month_total," +
-     *                   "            tb_cast.employee_total,tb_cast.rent_total," +
-     *                   "            tb_cast.profit_total,tb_cast.performance_total," +
-     *                   "            tb_cast.performance,tb_cast.rent_time,tb_cast.cost_total
      * @return
      */
     @Query(value = "SELECT *" +
@@ -59,7 +49,7 @@ public interface CastDao extends JpaRepository<Cast, Integer>, JpaSpecificationE
     @Transactional
     @Modifying
     @Query("update Cast c set c.performance =:performance where c.id=:id")
-    void updatePerformanceByBranchNameIn(@Param(value = "performance") Integer performance, Integer id);
+    void updatePerformanceByBranchNameIn(@Param(value = "performance") Integer performance, @Param(value = "id")Integer id);
 
     /**
      * 根据id获取盈利实体

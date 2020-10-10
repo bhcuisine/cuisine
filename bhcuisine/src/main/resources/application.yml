@@ -21,3 +21,4 @@ spring:
     username: bhcuisine
     validationQuery: SELECT 1 FROM DUAL
 
+

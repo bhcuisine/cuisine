@@ -60,7 +60,6 @@ public class MaterialsController {
     private static Double lastCost = 0.0;
 
 
-
     @ApiOperation(value = "新增材料", notes = "新增材料")
     @PostMapping("/api/materials")
     public Result addMaterials(@RequestBody Materials materials) {
@@ -69,8 +68,8 @@ public class MaterialsController {
         BigDecimal price = new BigDecimal(materials.getPrice());//把价格转换为bigDecimal对象
         BigDecimal quanty = new BigDecimal(materials.getQuanty());//把数量转换为bigDecimal对象
         BigDecimal cast = price.multiply(quanty);
-        System.out.println(materials.getPrice());
-        System.out.println(cast);
+//        System.out.println(materials.getPrice());
+//        System.out.println(cast);
         BigDecimal cast_total = cast.setScale(2, BigDecimal.ROUND_HALF_DOWN);//保留2位小数
         double castTotal = cast_total.doubleValue();
         ma.setMaterialsTotal(castTotal);//保存算出来一次材料成本
@@ -162,17 +161,17 @@ public class MaterialsController {
         double castTotal = cast_total.doubleValue();//获取一次材料成本
         //更新原材料需要的前端参数为价格，数量，id，材料名称
         materialsDao.updateMaterials(m.getMaterialsName(), time, castTotal, m.getPrice(), m.getQuanty(), m.getId());//更新原材料
-        List<Materials> materials=materialsDao.getMoney(m.getUid(),m.getAddTime());//根据材料uid和添加时间获取材料list集合
-        double costMoney3=0.0;//定义double类型参数
-        BigDecimal cost1=new BigDecimal(costMoney3);//封装成bidDecimal对象
-        for (Materials mater:
-             materials) {
-            BigDecimal cost2=new BigDecimal(mater.getMaterialsTotal());
-            cost1=cost1.add(cost2);
+        List<Materials> materials = materialsDao.getMoney(m.getUid(), m.getAddTime());//根据材料uid和添加时间获取材料list集合
+        double costMoney3 = 0.0;//定义double类型参数
+        BigDecimal cost1 = new BigDecimal(costMoney3);//封装成bidDecimal对象
+        for (Materials mater :
+                materials) {
+            BigDecimal cost2 = new BigDecimal(mater.getMaterialsTotal());
+            cost1 = cost1.add(cost2);
         }
-        double costMoney2=cost1.doubleValue();
-        String branchName=userDao.findAllById(m.getUid()).getBranchName();//根据材料uid获取店名
-        Cast cast1=castDao.getAllByRentTimeAndBranchName(m.getAddTime(),branchName);
+        double costMoney2 = cost1.doubleValue();
+        String branchName = userDao.findAllById(m.getUid()).getBranchName();//根据材料uid获取店名
+        Cast cast1 = castDao.getAllByRentTimeAndBranchName(m.getAddTime(), branchName);
         BigDecimal monthMoney = new BigDecimal(cast1.getMonthTotal());//总金额转为bigDecimal
         BigDecimal costMoney = new BigDecimal(costMoney2);//成本转为bigDecimal
         BigDecimal rentMoney = new BigDecimal(cast1.getRentTotal());//租金转为bigDecimal
@@ -192,8 +191,7 @@ public class MaterialsController {
             double performanceTotal = performance_total.doubleValue();
             castDao.updateCast2(costMoney2, cast1.getEmployeeTotal(), cast1.getMonthTotal(), cast1.getRentTotal(), pro, performanceTotal, m.getAddTime());
             return ResultFactory.buildSuccessResult("修改成功");
-        }
-        catch (RuntimeException | ParseException e){
+        } catch (RuntimeException | ParseException e) {
             e.printStackTrace();
         }
         return ResultFactory.buildSuccessResult("失败");
@@ -227,6 +225,7 @@ public class MaterialsController {
 
     /**
      * 根据id得到回显数据
+     *
      * @param id
      * @return
      */
@@ -234,7 +233,7 @@ public class MaterialsController {
     @GetMapping("/api/getMaterials2")
     public Result getMaterials(@RequestParam Integer id) {
         System.out.println(id);
-        Materials materials=materialsDao.findAllById(id);
+        Materials materials = materialsDao.findAllById(id);
         return ResultFactory.buildSuccessResult(materials);
     }
 
@@ -248,16 +247,16 @@ public class MaterialsController {
         String branchName = userDao.findAllById(materials.getUid()).getBranchName();//根据材料uid得到店名
         Cast cast = castDao.getAllByRentTimeAndBranchName(materials.getAddTime(), branchName);//根据店名和时间得到具体月份数据实体
         materialsDao.updateById(status, materials.getId());//更新成本状态位
-        List<Materials> m=materialsDao.getMoney(materials.getUid(),materials.getAddTime());
-        double costMoney3=0.0;
-        BigDecimal cost1=new BigDecimal(costMoney3);
-        for (Materials mater:
+        List<Materials> m = materialsDao.getMoney(materials.getUid(), materials.getAddTime());
+        double costMoney3 = 0.0;
+        BigDecimal cost1 = new BigDecimal(costMoney3);
+        for (Materials mater :
                 m) {
-            BigDecimal cost2=new BigDecimal(mater.getMaterialsTotal());
-            cost1=cost1.add(cost2);
+            BigDecimal cost2 = new BigDecimal(mater.getMaterialsTotal());
+            cost1 = cost1.add(cost2);
         }
-        double costMoney2=cost1.doubleValue();//将bigDecimal对象转换为double对象
-        System.out.println("当前的total是"+costMoney2);
+        double costMoney2 = cost1.doubleValue();//将bigDecimal对象转换为double对象
+        System.out.println("当前的total是" + costMoney2);
         BigDecimal monthMoney = new BigDecimal(cast.getMonthTotal());//总金额转为bigDecimal
         BigDecimal costMoney = new BigDecimal(costMoney2);//成本转为bigDecimal
         BigDecimal rentMoney = new BigDecimal(cast.getRentTotal());//租金转为bigDecimal
@@ -275,8 +274,8 @@ public class MaterialsController {
             BigDecimal performance_total = newProfit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
             //将最终绩效转换为double保存数据库
             double performanceTotal = performance_total.doubleValue();
-            System.out.println("当前" + lastCost);
-            System.out.println("利润值" + pro);
+//            System.out.println("当前" + lastCost);
+//            System.out.println("利润值" + pro);
             castDao.updateCast2(costMoney2, cast.getEmployeeTotal(), cast.getMonthTotal(), cast.getRentTotal(), pro, performanceTotal, materials.getAddTime());
             return ResultFactory.buildSuccessResult("修改成功");
         } catch (RuntimeException | ParseException e) {
@@ -341,9 +340,7 @@ public class MaterialsController {
 //        User user=(User) SecurityUtils.getSubject().getSession().getAttribute("user");
 //        String username=user.getUsername();
 //        String branchName=userDao.getByUsername(username).getBranchName();
-        System.out.println("店名"+c.getBranchName());
-        System.out.println("店名时间"+c.getRentTime());
-        Cast cast1 = castDao.getAllByRentTimeAndBranchName(c.getRentTime(),c.getBranchName());
+        Cast cast1 = castDao.getAllByRentTimeAndBranchName(c.getRentTime(), c.getBranchName());
         if (cast1 == null) {//
             Cast cast = new Cast();
             cast.setBranchName(c.getBranchName());//店名

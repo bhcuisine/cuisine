@@ -7,10 +7,13 @@ import com.bh.bhcuisine.result.ResultFactory;
 import com.bh.bhcuisine.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * 登录controller
@@ -35,23 +38,21 @@ public class LoginController {
      */
     @ApiOperation(value = "用户登录", notes = "用户登录")
     @PostMapping(value = "/api/login")
-    public Result login(@RequestBody User reuser
-    ) {
-        String username = reuser.getUsername().replaceAll("　| ", "");//去除全角和半角空格
-        User user = userService.getByUsername(username);//根据用户名得到用户实体
-        if (user == null) {
-            return ResultFactory.buildFailResult("用户不存在");
-        } else {
-            //提交登录
-            Subject subject = SecurityUtils.getSubject();
-            if (!subject.isAuthenticated()) {
-                UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), reuser.getPassword());
-                token.setRememberMe(true);//实现rembeRme
-                subject.login(token);//调用shiro的登录方法
-                return ResultFactory.buildSuccessResult(user);
-            } else {
-                return ResultFactory.buildFailResult("失败");
-            }
+    public Result login(@RequestBody User requestUser) {
+        String username = requestUser.getUsername().replaceAll("　| ", "");//去除全角和半角空格
+        username = HtmlUtils.htmlEscape(username);
+
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, requestUser.getPassword());
+        usernamePasswordToken.setRememberMe(true);
+        try {
+            subject.login(usernamePasswordToken);
+            User user = userService.getByUsername(username);//根据用户名得到用户实体
+            return ResultFactory.buildSuccessResult(user);
+        } catch (IncorrectCredentialsException e) {
+            return ResultFactory.buildFailResult("密码错误");
+        } catch (UnknownAccountException e) {
+            return ResultFactory.buildFailResult("账号不存在");
         }
     }
 

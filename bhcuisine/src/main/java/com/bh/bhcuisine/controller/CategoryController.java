@@ -28,9 +28,8 @@ public class CategoryController {
     @ApiOperation(value = "分类", notes = "分类")
     @PostMapping("/api/addcategory")
     public Result addCategory(@RequestBody Category c) {
-        System.out.println(c.getCategoryName());
-        Category seachC = categoryService.findAllByCategoryName(c.getCategoryName());
-        if (seachC == null) {
+        Category searchC = categoryService.findAllByCategoryName(c.getCategoryName());
+        if (searchC == null) {
             Category category = new Category();
             category.setCategoryName(c.getCategoryName());
             categoryService.addCategory(category);
