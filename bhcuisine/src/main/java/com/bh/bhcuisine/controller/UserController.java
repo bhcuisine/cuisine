@@ -265,9 +265,17 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "得到门店集合", notes = "得到门店集合")
+    @GetMapping(value = "/api/getBranchUserList")
+    public Result getBranchUserList(@RequestParam(value = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                                    @RequestParam(value = "pagesize", required = false, defaultValue = "10") Integer pagesize){
+        PageRequest pageRequest = PageRequest.of(currentPage - 1, pagesize);
+        Page<User> list=userDao.findAllUserByEnabled(pageRequest);
+        return ResultFactory.buildSuccessResult(list);
+    }
+
     /**
      * 重置用户密码
-     *
      * @param user
      * @return
      */

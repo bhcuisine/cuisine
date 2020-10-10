@@ -48,7 +48,11 @@ public class LoginController {
         try {
             subject.login(usernamePasswordToken);
             User user = userService.getByUsername(username);//根据用户名得到用户实体
-            return ResultFactory.buildSuccessResult(user);
+            if(user.getEnabled()==0){
+                return ResultFactory.buildFailResult("用户已经被禁用");
+            }else{
+                return ResultFactory.buildSuccessResult(user);
+            }
         } catch (IncorrectCredentialsException e) {
             return ResultFactory.buildFailResult("密码错误");
         } catch (UnknownAccountException e) {

@@ -37,7 +37,7 @@ public interface CastDao extends JpaRepository<Cast, Integer>, JpaSpecificationE
             "            FROM tb_cast LEFT JOIN tb_user" +
             "                  ON tb_cast.branch_name=tb_user.branch_name " +
             "where if(?1 is not null,tb_cast.rent_time=?1,1=1) " +
-            "AND if(?2 is not null,tb_cast.branch_name=?2,1=1) ORDER BY tb_cast.rent_time desc", nativeQuery = true)
+            "AND if(?2 is not null,tb_cast.branch_name=?2,1=1) AND tb_user.enabled=1 ORDER BY tb_cast.rent_time desc", nativeQuery = true)
     Page<Cast> findAllByRAndBranchNameAndRenTime2(@Param(value = "rentTime") String rentTime, @Param(value = "branchName") String branchName,Pageable pageable);
 
     /**

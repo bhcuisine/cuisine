@@ -9,7 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 /**
  * 用户dao层
  */
@@ -56,5 +57,10 @@ public interface UserDao extends JpaRepository<User, Integer>, JpaSpecificationE
     @Modifying
     @Query("update User u set u.password =?1 where u.username=?2")
     void UpdateUserPassword(@Param(value = "password")String password,@Param(value = "username")String username);
+
+
+
+    @Query(value = "select * from tb_user where tb_user.enabled=1 AND tb_user.username!='总裁'",nativeQuery = true)
+    Page<User> findAllUserByEnabled(Pageable pageable);
 
 }
