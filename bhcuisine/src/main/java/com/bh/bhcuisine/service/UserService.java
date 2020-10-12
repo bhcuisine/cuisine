@@ -63,6 +63,10 @@ public class UserService {
     public void UpdateUserPassword(String password,String username){
         userDao.UpdateUserPassword(password,username);
     }
-
-
+    /**
+     * 修改分店信息
+     */
+    public void UpdateUser(String username,String branchName,String branchLocation,Integer id){
+        userDao.UpdateUser(username,branchName,branchLocation,id);
+    }
 }

@@ -13,7 +13,7 @@ public class WebAppConfigurer implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
 //                .allowedOrigins("*")
-                .allowedOrigins("http://192.168.1.130:8080")
+                .allowedOrigins("http://192.168.1.127:8080")
 //                .allowedOrigins("http://121.36.84.133:8080")
                 .allowCredentials(true)
                 .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")

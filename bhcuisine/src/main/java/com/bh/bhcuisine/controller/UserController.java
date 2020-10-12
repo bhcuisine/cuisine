@@ -5,6 +5,7 @@ import com.bh.bhcuisine.config.ShiroUtil;
 import com.bh.bhcuisine.dao.CastDao;
 import com.bh.bhcuisine.dao.MaterialsDao;
 import com.bh.bhcuisine.dao.UserDao;
+import com.bh.bhcuisine.dto.DataDto;
 import com.bh.bhcuisine.dto.PerformanceDto;
 import com.bh.bhcuisine.entity.Cast;
 import com.bh.bhcuisine.entity.Materials;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -158,9 +160,7 @@ public class UserController {
      */
     @ApiOperation(value = "修改绩效率", notes = "修改绩效率")
     @PostMapping("/api/updatePerformance")
-    public Result update(
-            @RequestBody Cast c
-    ) {
+    public Result update(@RequestBody Cast c) {
         Cast cast = castService.findAllById(c.getId());
         castService.updatePerformanceByBranchNameIn(c.getPerformance(), c.getId());
         Double monthTotal = cast.getMonthTotal();
@@ -240,8 +240,7 @@ public class UserController {
      */
     @ApiOperation(value = "添加新店", notes = "添加新店")
     @PostMapping(value = "/api/saveUser")
-    public Result addUser(@RequestBody User reuser
-    ) {
+    public Result addUser(@RequestBody User reuser) {
         User u = userService.getByUsername(reuser.getUsername());
         User u2 = userDao.findAllByBranchName(reuser.getBranchName());
         if (u != null) {
@@ -299,6 +298,37 @@ public class UserController {
         } else {
             return ResultFactory.buildFailResult("修改失败");
         }
+    }
+    /**
+     * 修改分店信息（根据id查询）
+     */
+    @ApiOperation(value = "回显", notes = "回显")
+    @GetMapping(value = "/api/getUser")
+    public Result getUser(@RequestParam Integer id){
+        User user = userDao.findAllById(id);
+        return ResultFactory.buildSuccessResult(user);
+    }
+
+    @ApiOperation(value = "修改分店信息", notes = "修改分店信息")
+    @PostMapping(value = "/api/updateUser")
+    public Result UpdateUser(
+            @RequestBody User user
+//            @RequestParam String username,
+//            @RequestParam String branchName,
+//            @RequestParam String branchLocation,
+//            @RequestParam Integer id
+    ){
+        userService.UpdateUser(user.getUsername(),user.getBranchName(),user.getBranchLocation(),user.getId());
+//        userService.UpdateUser(username,branchName,branchLocation,id);
+        return ResultFactory.buildSuccessResult(null);
+    }
+
+    @ApiOperation(value = "删除分店", notes = "删除分店")
+    @PostMapping(value = "/api/deleteUser")
+    public Result deleteUser(@RequestBody DataDto dataDto){
+        int enabled = 0;
+        userDao.deleteUser(enabled,dataDto.getId());
+        return ResultFactory.buildSuccessResult(null);
     }
 }
 

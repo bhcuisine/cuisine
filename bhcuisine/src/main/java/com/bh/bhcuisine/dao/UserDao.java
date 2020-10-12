@@ -58,9 +58,28 @@ public interface UserDao extends JpaRepository<User, Integer>, JpaSpecificationE
     @Query("update User u set u.password =?1 where u.username=?2")
     void UpdateUserPassword(@Param(value = "password")String password,@Param(value = "username")String username);
 
-
-
+    /**
+     * 查询所有店铺信息
+     * @param pageable
+     * @return
+     */
     @Query(value = "select * from tb_user where tb_user.enabled=1 AND tb_user.username!='总裁'",nativeQuery = true)
     Page<User> findAllUserByEnabled(Pageable pageable);
 
+    /**
+     * 修改店铺信息
+     *
+     * @param password
+     */
+    @Transactional
+    @Modifying
+    @Query("update User u set u.username =?1,u.branchName =?2,u.branchLocation =?3 where u.id=?4")
+    void UpdateUser(@Param(value = "username")String username,@Param(value = "branchName")String branchName,@Param(value = "branchLocation")String branchLocation,@Param(value = "id")Integer id);
+    /**
+     * 删除店铺
+     */
+    @Transactional
+    @Modifying
+    @Query("update User u set u.enabled =?1 where u.id=?2")
+    void deleteUser(@Param(value = "enabled")Integer enabled,@Param(value = "id")Integer id);
 }

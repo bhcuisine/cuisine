@@ -35,7 +35,7 @@ public class User implements Serializable {
      */
     private String salt;
     /**
-     * 使能状态
+     * 使用状态
      */
     private Integer enabled;
     /**

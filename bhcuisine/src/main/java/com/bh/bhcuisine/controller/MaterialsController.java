@@ -335,8 +335,7 @@ public class MaterialsController {
      */
     @ApiOperation(value = "不勾选具体月份插入数据单纯插入数据", notes = "插入数据")
     @PostMapping("/api/addCast")
-    public Result addCast(
-            @RequestBody Cast c) {
+    public Result addCast(@RequestBody Cast c) {
 //        User user=(User) SecurityUtils.getSubject().getSession().getAttribute("user");
 //        String username=user.getUsername();
 //        String branchName=userDao.getByUsername(username).getBranchName();
